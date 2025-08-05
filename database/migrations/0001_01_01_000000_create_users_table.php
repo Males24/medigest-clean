@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // ✅ Campo de papel do utilizador: paciente, medico, admin
+            $table->enum('role', ['paciente', 'medico', 'admin'])->default('paciente');
+
             $table->rememberToken();
             $table->timestamps();
         });
