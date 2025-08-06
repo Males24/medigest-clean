@@ -1,0 +1,13 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 883 896" width="883" height="896">
+	<title>Novo Projeto</title>
+	<defs>
+		<image  width="488" height="495" id="img1" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAegAAAHvAQMAAAClm973AAAAAXNSR0IB2cksfwAAAAZQTFRFCpN7CpN7vkgUTwAAAAJ0Uk5T/wDltzBKAAAAgElEQVR4nO3LoQ0AMAgAQZiM1RmttkkRdZh7+cllvFUPcyxpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpmqZpel3/R9M0TdM0TdM0TdM0TdM0TdM0TdM0TdM0TdM0fXcATq1Yp7vrKZEAAAAASUVORK5CYII="/>
+		<image  width="490" height="494" id="img2" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeoAAAHuAQMAAABqMt1vAAAAAXNSR0IB2cksfwAAAAZQTFRF////ECAiCQAVSAAAAAJ0Uk5T/wDltzBKAAAAhUlEQVR4nO3NsQ0AMAgDwbD/VJmMDBCQKCnuS0snxxmX/3QDx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3F8Py/GpuoJx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx3Ecx/EN/AFr/2FN5oXC/gAAAABJRU5ErkJggg=="/>
+		<image  width="866" height="880" id="img3" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA2IAAANwAQMAAAB3f0tBAAAAAXNSR0IB2cksfwAAAAZQTFRFAAAAWN/CtAK8iwAAAAJ0Uk5TAP9bkSK1AAABnklEQVR4nO3csQ2AQAgFUK/S0o11NUey00YdQExojHfx/ZIAjwkoXTrTHNfXMb2i0Gg0Go1Go7Wo7cN9/qDRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go32knXmui7V8FhqNRqPRaLSKtGDHG+k3Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaD/W8gnuqvx7A41Go9FoNNqTlu9t75MnjUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNBqNRqPRaDQajUaj0Wg0Go1Go9FoNFrNWlyn0Wg0Go1Ga1C7ADnOP/SDVWPgAAAAAElFTkSuQmCC"/>
+	</defs>
+	<style>
+	</style>
+	<use id="Path 0" href="#img1" x="366" y="29"/>
+	<use id="Path 1" href="#img2" x="30" y="373"/>
+	<use id="Camada 2" href="#img3" x="9" y="8"/>
+</svg>

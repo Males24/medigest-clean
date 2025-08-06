@@ -23,7 +23,12 @@ class CheckRole
         $user = Auth::user();
 
         if (!in_array($user->role, $roles)) {
-            abort(403, 'Acesso não autorizado');
+            return match ($user->role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'medico' => redirect()->route('medico.dashboard'),
+                'paciente' => redirect()->route('paciente.home'),
+                default => abort(403),
+            };
         }
 
         return $next($request);
