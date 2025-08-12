@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import './datepicker.css';
+@import './modal.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -26,4 +28,7 @@
     --color-home-medigest-hover: #06664e;
     --color-home-medigest-button: #DFF3EE;
     --color-home-medigest-button-hover: #cae8df;
+    --color-text: #1f2937;
+    --color-text2: #2d3b4f;
+    --color-text2hover: #4c5c76;
 }

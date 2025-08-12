@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Paciente;
 use Illuminate\Support\Facades\Hash;
 
 class PacienteSeeder extends Seeder
@@ -13,11 +14,40 @@ class PacienteSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Paciente User',
-            'email' => 'paciente@medigest.com',
+        // Paciente 1
+        $paciente1 = User::factory()->paciente()->create([
+            'name' => 'Sofia Carvalho',
+            'email' => 'sofia@medigest.com',
             'password' => Hash::make('password'),
-            'role' => 'paciente',
         ]);
+
+        Paciente::firstOrCreate(
+            ['user_id' => $paciente1->id],
+            [
+                'genero' => 'feminino',
+                'nif' => '111111111',
+                'telefone' => '910000004',
+                'endereco' => 'Rua das Flores, 50, Coimbra',
+                'data_nascimento' => '1990-07-10',
+            ]
+        );
+
+        // Paciente 2
+        $paciente2 = User::factory()->paciente()->create([
+            'name' => 'Carlos Neves',
+            'email' => 'carlos@medigest.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Paciente::firstOrCreate(
+            ['user_id' => $paciente2->id],
+            [
+                'genero' => 'masculino',
+                'nif' => '222222222',
+                'telefone' => '910000005',
+                'endereco' => 'Av. Liberdade, 101, Lisboa',
+                'data_nascimento' => '2001-07-10',
+            ]
+        );
     }
 }
