@@ -35,23 +35,15 @@
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-6 py-3 font-medium">{{ $e->nome }}</td>
             <td class="px-6 py-3 text-right">
-                <a href="{{ route('admin.especialidades.edit', $e) }}" class="text-blue-600 hover:underline">Editar</a>
-
-                {{-- form com ID estável para submit via modal --}}
-                <form id="form-del-espec-{{ $e->id }}"
-                        action="{{ route('admin.especialidades.destroy', $e) }}"
-                        method="POST" class="inline">
-                    @csrf
-                    @method('DELETE')
-                    <button
+                <button
                     type="button"
-                    class="ml-3 text-red-600 hover:underline js-del-espec"
-                    data-form="form-del-espec-{{ $e->id }}"
+                    class="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-3 py-1.5 rounded text-sm shadow hover:bg-zinc-200 js-espec-actions-btn"
+                    data-edit-url="{{ route('admin.especialidades.edit', $e) }}"
+                    data-destroy-url="{{ route('admin.especialidades.destroy', $e) }}"
                     data-nome="{{ $e->nome }}"
-                    >
-                    Apagar
-                    </button>
-                </form>
+                >
+                    Ação <span>▼</span>
+                </button>
             </td>
           </tr>
         @empty
@@ -69,5 +61,6 @@
   </div>
 </div>
 
+@vite('resources/js/pages/especialidades-admin-index-dropdown.js')
 @vite('resources/js/pages/especialidades-admin-index-modal.js')
 @endsection

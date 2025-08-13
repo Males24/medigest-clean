@@ -5,52 +5,47 @@ export function mostrarModalConsulta(props) {
   const statusColor = getStatusColor(props.estado || '');
   const rootId = 'modal-consulta';
 
+  // data_consulta costuma vir "dd/mm/yyyy hh:mm:ss"
+  const [dataStr, horaStr] = String(props.data_consulta || '').split(' ');
+  const showEmail = props.paciente_email && props.paciente_email !== '-';
+  const showDesc  = props.descricao && props.descricao !== '-';
+
   const html = `
     <div id="${rootId}" class="mz-overlay" role="dialog" aria-modal="true" aria-labelledby="mz-det-title">
-      <div class="modal-content mz-card mz-card-md mz-card-centered">
+      <div class="modal-content mz-card mz-card-compact">
 
         <button class="mz-x" aria-label="Fechar"
                 onclick="document.getElementById('${rootId}')?.remove()">×</button>
 
-        <div class="mz-head-centered">
-          <h1 id="mz-det-title" class="text-3xl font-semibold tracking-tight text-gray-900">Detalhes da Consulta</h1>
+        <h1 id="mz-det-title" class="mz-title-compact">Consulta</h1>
+
+        <div class="mz-meta">
+          <span class="mz-date">${dataStr || props.data_consulta || '—'}</span>
+          ${horaStr ? `<span class="mz-dot">•</span><span class="mz-time">${horaStr}</span>` : ''}
+          <span class="badge ${statusColor} mz-chip">${props.estado || '—'}</span>
         </div>
 
-        <hr class="mz-hr">
+        <div class="mz-grid">
+          <div class="mz-col">
+            <div class="mz-label">Paciente</div>
+            <div class="mz-value">${props.paciente_nome || '—'}</div>
+            ${showEmail ? `<div class="mz-sub">${props.paciente_email}</div>` : ''}
+          </div>
+          <div class="mz-col">
+            <div class="mz-label">Médico</div>
+            <div class="mz-value">${props.medico_nome || '—'}</div>
+            <div class="mz-sub">${props.especialidade_nome || '—'}</div>
+          </div>
+        </div>
 
-        <dl class="mz-dl">
-          <div class="mz-row">
-            <dt>Data da consulta:</dt>
-            <dd>${props.data_consulta}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Nome do Paciente:</dt>
-            <dd>${props.paciente_nome}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Email do Paciente:</dt>
-            <dd>${props.paciente_email}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Descrição do Problema:</dt>
-            <dd>${props.descricao}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Nome do Médico:</dt>
-            <dd>${props.medico_nome}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Especialidade:</dt>
-            <dd>${props.especialidade_nome}</dd>
-          </div>
-          <div class="mz-row">
-            <dt>Estado da Consulta:</dt>
-            <dd><span class="badge ${statusColor}">${props.estado}</span></dd>
-          </div>
-        </dl>
+        ${showDesc ? `
+          <div class="mz-section">
+            <div class="mz-label">Descrição</div>
+            <p class="mz-text">${props.descricao}</p>
+          </div>` : ''}
 
-        <div class="mz-footer">
-          <button class="mz-btn mz-btn--md mz-btn--close mz-btn-block"
+        <div class="mz-actions mt-2">
+          <button class="mz-btn mz-btn--md mz-btn--inset"
                   onclick="document.getElementById('${rootId}')?.remove()">Fechar</button>
         </div>
       </div>

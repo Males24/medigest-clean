@@ -40,21 +40,15 @@
               {{ $m->especialidades->pluck('nome')->join(', ') ?: '—' }}
             </td>
             <td class="px-6 py-3 text-right">
-              <a href="{{ route('admin.medicos.edit',$m) }}" class="text-blue-600 hover:underline">Editar</a>
-
-              {{-- form com ID estável para submit via modal --}}
-              <form id="form-del-medico-{{ $m->id }}"
-                    action="{{ route('admin.medicos.destroy',$m) }}"
-                    method="POST" class="inline">
-                @csrf
-                @method('DELETE')
-                <button type="button"
-                        class="ml-3 text-red-600 hover:underline js-del-medico"
-                        data-form="form-del-medico-{{ $m->id }}"
-                        data-nome="{{ $m->user->name }}">
-                  Apagar
-                </button>
-              </form>
+            <button
+                type="button"
+                class="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-3 py-1.5 rounded text-sm shadow hover:bg-zinc-200 js-medico-actions-btn"
+                data-edit-url="{{ route('admin.medicos.edit', $m) }}"
+                data-destroy-url="{{ route('admin.medicos.destroy', $m) }}"
+                data-nome="{{ $m->user->name }}"
+            >
+                Ação <span>▼</span>
+            </button>
             </td>
           </tr>
         @endforeach
@@ -67,5 +61,6 @@
   </div>
 </div>
 
+@vite('resources/js/pages/medicos-admin-index-dropdown.js')
 @vite('resources/js/pages/medicos-admin-index-modal.js')
 @endsection

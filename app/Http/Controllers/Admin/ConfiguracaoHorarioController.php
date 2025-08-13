@@ -34,39 +34,47 @@ class ConfiguracaoHorarioController extends Controller
     {
         $data = $request->validate([
             'dias'          => ['required','array','min:1'],
-            'dias.*'        => ['integer','in:1,2,3,4,5,6,7'],
+            'dias.*'        => ['integer','in:0,1,2,3,4,5,6'],
             'manha_inicio'  => ['nullable','date_format:H:i'],
             'manha_fim'     => ['nullable','date_format:H:i'],
             'tarde_inicio'  => ['nullable','date_format:H:i'],
             'tarde_fim'     => ['nullable','date_format:H:i'],
-            'ativo'         => ['nullable','boolean'],
         ], [
             'dias.required' => 'Seleciona pelo menos um dia.',
         ]);
 
-        // Só altera os campos que realmente vierem preenchidos
-        $campos = [
-            'manha_inicio' => $request->input('manha_inicio'),
-            'manha_fim'    => $request->input('manha_fim'),
-            'tarde_inicio' => $request->input('tarde_inicio'),
-            'tarde_fim'    => $request->input('tarde_fim'),
+        $selecionados = collect($data['dias'])->map(fn ($d) => (int)$d)->all();
+
+        // Para os dias SELECIONADOS: aplica valores; '' => null (limpa)
+        $mi = $request->input('manha_inicio');
+        $mf = $request->input('manha_fim');
+        $ti = $request->input('tarde_inicio');
+        $tf = $request->input('tarde_fim');
+
+        $horasSelecionados = [
+            'manha_inicio' => ($mi === '' ? null : $mi),
+            'manha_fim'    => ($mf === '' ? null : $mf),
+            'tarde_inicio' => ($ti === '' ? null : $ti),
+            'tarde_fim'    => ($tf === '' ? null : $tf),
+            'ativo'        => true,
         ];
 
-        // Limpa vazios
-        foreach ($campos as $k => $v) {
-            if ($v === '' || $v === null) unset($campos[$k]);
-        }
+        // 1) Atualiza e ativa os dias selecionados
+        ConfiguracaoHorario::whereIn('dia_semana', $selecionados)
+            ->update($horasSelecionados);
 
-        // Se enviou o checkbox "ativo", força para true; se quiseres permitir desativar, adapta aqui
-        if ($request->filled('ativo')) {
-            $campos['ativo'] = true;
-        }
+        // 2) Desativa e LIMPA completamente os dias NÃO selecionados
+        ConfiguracaoHorario::whereNotIn('dia_semana', $selecionados)
+            ->update([
+                'manha_inicio' => null,
+                'manha_fim'    => null,
+                'tarde_inicio' => null,
+                'tarde_fim'    => null,
+                'ativo'        => false,
+            ]);
 
-        if (!empty($campos)) {
-            ConfiguracaoHorario::whereIn('dia_semana', $data['dias'])->update($campos);
-        }
-
-        return redirect()->route('admin.horarios.index')->with('success', 'Horários atualizados!');
+        return redirect()->route('admin.horarios.index')
+            ->with('success', 'Horários atualizados!');
     }
 
     /**

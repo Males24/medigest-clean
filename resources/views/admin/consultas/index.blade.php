@@ -45,7 +45,7 @@
             <td class="px-6 py-3">{{ \Carbon\Carbon::parse($consulta->data)->format('d/m/Y') }}</td>
             <td class="px-6 py-3">{{ $consulta->hora }}</td>
             <td class="px-6 py-3">
-                <span class="inline-block bg-zinc-100 text-zinc-800 text-xs px-2 py-1 rounded">
+                <span class="inline-block bg-gray-500 font-bold text-white text-xs px-2 py-1 rounded-xl">
                     {{ ucfirst($consulta->estado) }}
                 </span>
             </td>
