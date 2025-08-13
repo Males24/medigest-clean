@@ -14,6 +14,7 @@ export default defineConfig({
         'resources/js/pages/consultas-admin-index-modal.js',
         'resources/js/pages/especialidades-admin-index-modal.js',
         'resources/js/pages/medicos-admin-index-modal.js',
+        'resources/js/pages/consultas-admin-index-dropdown.js',
       ],
       refresh: true,
     }),

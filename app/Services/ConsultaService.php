@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Consulta;
 use App\Models\ConfiguracaoHorario; // horário GLOBAL
 use App\Models\Horario;             // horário por médico (fallback)
-use App\Models\ConfiguracaoAgenda;
+use App\Models\ParametrosAgendamento;
 use App\Models\ConsultaTipo;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +23,9 @@ class ConsultaService
 
     protected function loadAgendaGlobals(): array
     {
-        $c = ConfiguracaoAgenda::first();
+        $c = ParametrosAgendamento::first();
         return [
-            'buffer_min' => (int)($c->buffer_min ?? 10),
+            'buffer_min' => (int)($c->buffer_min ?? 0),
             'passo_min'  => (int)($c->passo_min  ?? 30),
         ];
     }
@@ -103,18 +103,18 @@ class ConsultaService
         if (!$okFaixa) return false;
 
         // 2) Conflitos com buffer
-        $buffer    = (int) $globals['buffer_min'];
+        $buffer = (int) $globals['buffer_min'];
+        // Novo intervalo com buffer aplicado
         $inicioBuf = (clone $inicio)->subMinutes($buffer)->format('H:i');
         $fimBuf    = (clone $fim)->addMinutes($buffer)->format('H:i');
-
+        // Conflito se: existing_start < new_end  E  existing_end > new_start
         $existeConflito = Consulta::where('medico_id', $medicoId)
             ->where('data', $data->toDateString())
             ->whereIn('estado', ['agendada','confirmada','pendente_medico'])
             ->where(function ($q) use ($inicioBuf, $fimBuf) {
-                $q->whereBetween('hora', [$inicioBuf, $fimBuf])
-                  ->orWhereRaw('? BETWEEN hora AND ADDTIME(hora, SEC_TO_TIME(duracao * 60))', [$inicioBuf])
-                  ->orWhereRaw('? BETWEEN hora AND ADDTIME(hora, SEC_TO_TIME(duracao * 60))', [$fimBuf]);
-            })->exists();
+                $q->whereRaw('hora < ? AND ADDTIME(hora, SEC_TO_TIME(duracao * 60)) > ?', [$fimBuf, $inicioBuf]);
+            })
+            ->exists();
 
         return !$existeConflito;
     }
@@ -162,7 +162,10 @@ class ConsultaService
         if (!$faixas) return [];
 
         $slots = [];
-        $passo = (int) $globals['passo_min'];
+        $passo = (int) ($globals['passo_min'] ?? 0);
+        if ($passo < 1) { // 0 ou negativo -> usa a duração do tipo
+            $passo = $duracao;
+        }
 
         foreach ($faixas as [$ini, $fim]) {
             // se o formato vier 'HH:MM:SS', corta

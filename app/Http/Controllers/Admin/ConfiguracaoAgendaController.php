@@ -3,22 +3,22 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ConfiguracaoAgenda;
+use App\Models\ParametrosAgendamento;
 use Illuminate\Http\Request;
 
-class ConfiguracaoAgendaController extends Controller
+class ParametrosAgendamentoController extends Controller
 {
     // Mostrar a página de configuração (singleton)
     public function index()
     {
-        $config = ConfiguracaoAgenda::firstOrCreate([], ['tipo' => 'semanal']);
+        $config = ParametrosAgendamento::firstOrCreate([], ['tipo' => 'semanal']);
         return view('admin.agenda.index', compact('config'));
     }
 
     // Página de edição
     public function edit()
     {
-        $config = ConfiguracaoAgenda::firstOrCreate([], ['tipo' => 'semanal']);
+        $config = ParametrosAgendamento::firstOrCreate([], ['tipo' => 'semanal']);
         return view('admin.agenda.edit', compact('config'));
     }
 
@@ -32,7 +32,7 @@ class ConfiguracaoAgendaController extends Controller
             'tipo.in' => 'Valor inválido.',
         ]);
 
-        $config = ConfiguracaoAgenda::firstOrCreate([]);
+        $config = ParametrosAgendamento::firstOrCreate([]);
         $config->update($data);
 
         // Se fores usar cache para leitura

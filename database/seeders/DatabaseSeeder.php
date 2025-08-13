@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             PacienteSeeder::class,
             ConsultaTipoSeeder::class,
             ConsultaSeeder::class,
-            ConfiguracaoAgendaSeeder::class,
+            ParametrosAgendamentoSeeder::class,
             HorarioSeeder::class,
             ConfiguracaoHorarioSeeder::class,
         ]);

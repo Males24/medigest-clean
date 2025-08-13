@@ -49,32 +49,28 @@
                     {{ ucfirst($consulta->estado) }}
                 </span>
             </td>
-            <td class="px-6 py-3 text-right space-x-3">
-            @php
+            <td class="px-6 py-3 text-right">
+              @php
                 $payload = [
-                'data_consulta'      => \Carbon\Carbon::parse($consulta->data)->format('d/m/Y') . ' ' . ($consulta->hora ?? ''),
-                'paciente_nome'      => $consulta->paciente->name ?? '-',
-                'paciente_email'     => $consulta->paciente->email ?? '-',
-                'descricao'          => $consulta->motivo ?? '-',
-                'medico_nome'        => $consulta->medico->name ?? '-',
-                'especialidade_nome' => $consulta->especialidade->nome ?? '-',
-                'estado'             => ucfirst($consulta->estado ?? '-'),
+                  'data_consulta'      => \Carbon\Carbon::parse($consulta->data)->format('d/m/Y') . ' ' . ($consulta->hora ?? ''),
+                  'paciente_nome'      => $consulta->paciente->name ?? '-',
+                  'paciente_email'     => $consulta->paciente->email ?? '-',
+                  'descricao'          => $consulta->motivo ?? '-',
+                  'medico_nome'        => $consulta->medico->name ?? '-',
+                  'especialidade_nome' => $consulta->especialidade->nome ?? '-',
+                  'estado'             => ucfirst($consulta->estado ?? '-'),
                 ];
-            @endphp
+              @endphp
 
-            <button
+              <button
                 type="button"
-                class="text-blue-600 hover:underline"
-                onclick='mostrarModalConsulta(@json($payload))'>
-                Ver
-            </button>
-
-            @if ($consulta->estado === 'agendada')
-                <button type="button" class="text-red-600 hover:underline"
-                    onclick="confirmarCancelamento({ action: '{{ route('admin.consultas.cancelar', $consulta) }}', csrf: '{{ csrf_token() }}' })">
-                    Cancelar
-                </button>
-            @endif
+                class="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-3 py-1.5 rounded text-sm shadow hover:bg-zinc-200 js-consulta-actions-btn"
+                data-payload='@json($payload)'
+                data-cancel-url="{{ $consulta->estado === 'agendada' ? route('admin.consultas.cancelar', $consulta) : '' }}"
+                data-has-cancel="{{ $consulta->estado === 'agendada' ? '1' : '0' }}"
+              >
+                Ação <span>▼</span>
+              </button>
             </td>
           </tr>
         @endforeach
@@ -84,6 +80,7 @@
 </div>
 
 @vite('resources/js/pages/consultas-admin-index-modal.js')
+@vite('resources/js/pages/consultas-admin-index-dropdown.js')
 @endsection
 
 

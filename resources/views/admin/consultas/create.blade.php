@@ -167,7 +167,7 @@
             Seguinte
             </button>
             <button type="submit" id="btnSubmit"
-                    class="px-5 py-2.5 rounded-xl bg-green-600 text-white hover:bg-green-700 hidden">
+                    class="px-5 py-2.5 rounded-xl bg-home-medigest text-white hover:bg-home-medigest-hover hidden">
             Agendar
             </button>
         </div>
