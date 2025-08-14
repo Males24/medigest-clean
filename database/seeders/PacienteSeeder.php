@@ -19,6 +19,7 @@ class PacienteSeeder extends Seeder
             'name' => 'Sofia Carvalho',
             'email' => 'sofia@medigest.com',
             'password' => Hash::make('password'),
+            'phone'    => '910000004',
         ]);
 
         Paciente::firstOrCreate(
@@ -37,6 +38,7 @@ class PacienteSeeder extends Seeder
             'name' => 'Carlos Neves',
             'email' => 'carlos@medigest.com',
             'password' => Hash::make('password'),
+            'phone'    => '910000005',
         ]);
 
         Paciente::firstOrCreate(

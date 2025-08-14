@@ -1,11 +1,13 @@
-// Dropdown "Ação" — Médicos (sem form oculto)
+// Dropdown "Ação" — Médicos
 let medOpenMenu = null;
+const t = (p, fb='') => p.split('.').reduce((o,k)=>o?.[k], (window.I18N||{})) ?? fb;
 
-function buildMenu(items){ /* igual ao de cima */ 
+function buildMenu(items){
   const wrap = document.createElement('div');
   wrap.className = 'absolute z-[9999] w-44 bg-white border border-zinc-200 rounded-md shadow-lg overflow-hidden';
   wrap.style.top='0px'; wrap.style.left='0px';
   const ul = document.createElement('ul'); ul.className = 'py-1 text-sm text-zinc-800';
+
   items.forEach(it => {
     if (it.type === 'divider'){ const hr = document.createElement('div'); hr.className='my-1 h-px bg-zinc-200'; ul.appendChild(hr); return; }
     const li = document.createElement('li');
@@ -16,6 +18,7 @@ function buildMenu(items){ /* igual ao de cima */
     btn.addEventListener('click', (e)=>{ e.preventDefault(); it.onClick?.(); closeMenu(); });
     li.appendChild(btn); ul.appendChild(li);
   });
+
   wrap.appendChild(ul); return wrap;
 }
 function positionMenu(menu, trigger){
@@ -28,25 +31,27 @@ function openDropdown(trigger){
 
   const editUrl    = trigger.getAttribute('data-edit-url')    || '';
   const destroyUrl = trigger.getAttribute('data-destroy-url') || '';
-  const nome       = trigger.getAttribute('data-nome')        || 'este médico';
+  const nome       = trigger.getAttribute('data-nome')        || '';
   const csrf       = document.querySelector('meta[name="csrf-token"]')?.content || '';
 
   const items = [
-    { label: 'Editar', onClick: () => editUrl && (window.location.href = editUrl) },
+    { label: t('actions.edit','Edit'), onClick: () => editUrl && (window.location.href = editUrl) },
     { type: 'divider' },
     {
-      label: 'Apagar', danger: true,
+      label: t('actions.delete','Delete'), danger: true,
       onClick: () => {
+        const formId = `del-med-${Date.now()}`;
+        const f = document.createElement('form');
+        f.id = formId; f.method='POST'; f.action=destroyUrl; f.style.display='none';
+        f.innerHTML = `<input type="hidden" name="_token" value="${csrf}">
+                       <input type="hidden" name="_method" value="DELETE">`;
+        document.body.appendChild(f);
+
         if (window.confirmarApagarMedico) {
-          window.confirmarApagarMedico({ action: destroyUrl, csrf, nome });
-          return;
-        }
-        if (confirm(`Tens a certeza que queres apagar "${nome}"?`)) {
-          const f = document.createElement('form');
-          f.method='POST'; f.action=destroyUrl;
-          f.innerHTML = `<input type="hidden" name="_token" value="${csrf}">
-                         <input type="hidden" name="_method" value="DELETE">`;
-          document.body.appendChild(f); f.submit();
+          window.confirmarApagarMedico({ formId, nome });
+        } else {
+          const msg = (t('modals.delete_doctor.question','Are you sure you want to delete the doctor “:name”?')).replace(':name', nome || '—');
+          if (confirm(msg)) f.submit(); else f.remove();
         }
       }
     }

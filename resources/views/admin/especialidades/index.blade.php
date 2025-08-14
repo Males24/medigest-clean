@@ -1,33 +1,38 @@
 @extends('layouts.dashboard')
-@section('title','Especialidades')
+@section('title', __('messages.nav.specialties'))
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="max-w-[1430px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
 
   {{-- Cabeçalho --}}
-  <div class="flex items-center justify-between mb-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <div>
-      <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Especialidades</h1>
-      <p class="text-sm text-gray-500 mt-1">Gestão das especialidades médicas disponíveis no sistema.</p>
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">@lang('messages.specialties.title')</h1>
+      <p class="text-sm text-gray-500 mt-1">@lang('messages.specialties.subtitle')</p>
     </div>
     <a href="{{ route('admin.especialidades.create') }}"
-       class="px-5 py-2.5 rounded-xl bg-home-medigest text-white hover:bg-home-medigest-hover shadow-sm">
-      Criar Especialidade
+       class="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-2xl text-white
+              bg-home-medigest hover:bg-home-medigest-hover shadow-sm
+              ring-1 ring-emerald-700/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/40">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      @lang('messages.specialties.create')
     </a>
   </div>
 
   {{-- Mensagens --}}
   @if(session('success'))
-    <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">{{ session('success') }}</div>
+    <div class="rounded-xl px-4 py-3 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200/60">
+      {{ session('success') }}
+    </div>
   @endif
 
   {{-- Tabela --}}
   <div class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200/60 overflow-x-auto">
-    <table class="min-w-full text-sm text-left text-gray-600">
+    <table class="min-w-[720px] w-full text-sm text-left text-gray-700">
       <thead class="bg-gray-50 text-xs uppercase text-gray-500">
         <tr>
-          <th class="px-6 py-3">Nome</th>
-          <th class="px-6 py-3 text-right">Ações</th>
+          <th class="px-6 py-3">@lang('messages.specialties.name')</th>
+          <th class="px-6 py-3 text-right">@lang('messages.consultas.actions')</th>
         </tr>
       </thead>
       <tbody>
@@ -35,20 +40,23 @@
           <tr class="border-t border-gray-100 hover:bg-gray-50">
             <td class="px-6 py-3 font-medium">{{ $e->nome }}</td>
             <td class="px-6 py-3 text-right">
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 bg-zinc-100 text-zinc-700 px-3 py-1.5 rounded text-sm shadow hover:bg-zinc-200 js-espec-actions-btn"
-                    data-edit-url="{{ route('admin.especialidades.edit', $e) }}"
-                    data-destroy-url="{{ route('admin.especialidades.destroy', $e) }}"
-                    data-nome="{{ $e->nome }}"
-                >
-                    Ação <span>▼</span>
-                </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm
+                       text-slate-800 border border-white/50 ring-1 ring-gray-200/80
+                       bg-gradient-to-b from-gray-50 to-gray-100
+                       shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.95),inset_3px_3px_8px_rgba(15,23,42,0.10)]
+                       hover:from-white hover:to-gray-50 hover:ring-gray-300/80 transition js-espec-actions-btn"
+                data-edit-url="{{ route('admin.especialidades.edit', $e) }}"
+                data-destroy-url="{{ route('admin.especialidades.destroy', $e) }}"
+                data-nome="{{ $e->nome }}">
+                {{ __('messages.common.action') }} <span class="text-gray-500">▼</span>
+              </button>
             </td>
           </tr>
         @empty
           <tr>
-            <td class="px-6 py-4 text-gray-500" colspan="2">Sem especialidades ainda.</td>
+            <td class="px-6 py-4 text-gray-500" colspan="2">@lang('messages.specialties.empty')</td>
           </tr>
         @endforelse
       </tbody>
@@ -56,7 +64,7 @@
   </div>
 
   {{-- Paginação --}}
-  <div class="mt-4">
+  <div>
     {{ $especialidades->links() }}
   </div>
 </div>

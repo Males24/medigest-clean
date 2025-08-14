@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',         // útil nos seeds/factories
+        'phone',        // novo
+        'avatar_path',  // caminho do upload em disk 'public'
     ];
 
     /**
@@ -43,6 +47,21 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'settings'          => 'array', // preferências gravadas em JSON
         ];
+    }
+
+    /**
+     * URL do avatar:
+     *  - se existir ficheiro em disk 'public' → /storage/...
+     *  - caso contrário → rota SVG com iniciais (cacheável)
+     */
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar_path && Storage::disk('public')->exists($this->avatar_path)) {
+            return Storage::disk('public')->url($this->avatar_path);
+        }
+        $ver = substr(md5(($this->updated_at ?? now()).$this->name), 0, 8);
+        return route('avatar.initials', ['user' => $this->id, 'v' => $ver]);
     }
 }

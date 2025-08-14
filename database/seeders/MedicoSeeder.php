@@ -22,6 +22,7 @@ class MedicoSeeder extends Seeder
             'name' => 'Ricardo Martins',
             'email' => 'ricardo@medigest.com',
             'password' => Hash::make('password'),
+            'phone' => '910000002',
         ]);
 
         $m1 = Medico::firstOrCreate(
@@ -36,6 +37,7 @@ class MedicoSeeder extends Seeder
             'name' => 'Marta Ferreira',
             'email' => 'marta@medigest.com',
             'password' => Hash::make('password'),
+            'phone' => '910000003',
         ]);
 
         $m2 = Medico::firstOrCreate(

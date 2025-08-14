@@ -12,10 +12,16 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->admin()->create([
-            'name' => 'Admin',
-            'email' => 'admin@medigest.com',
+        \App\Models\User::factory()->admin()->create([
+            'name'     => 'Administrador',
+            'email'    => 'admin@medigest.com',
             'password' => bcrypt('password'),
+            
+            'phone'    => '910000001',
+            'settings' => [
+                'theme' => 'system', 'language' => 'pt-PT',
+                'notify_email' => true, 'notify_push' => false, 'weekly_digest' => true,
+            ],
         ]);
     }
 }

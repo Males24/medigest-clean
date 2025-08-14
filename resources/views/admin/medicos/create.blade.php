@@ -1,19 +1,17 @@
 @extends('layouts.dashboard')
-@section('title','Criar Médico')
+@section('title', __('messages.doctors.create'))
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+<div class="max-w-[1430px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
 
-  {{-- Cabeçalho --}}
-  <div class="flex items-center justify-between mb-8">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
     <div>
-      <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Novo Médico</h1>
-      <p class="text-sm text-gray-500 mt-1">Preenche os dados do médico e associa as especialidades.</p>
+      <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">@lang('messages.doctors.new')</h1>
+      <p class="text-sm text-gray-500 mt-1">@lang('messages.doctors.new_subtitle')</p>
     </div>
-    <a href="{{ route('admin.medicos.index') }}" class="text-gray-600 hover:underline">Voltar</a>
+    <a href="{{ route('admin.medicos.index') }}" class="text-gray-700 hover:text-gray-900 hover:underline">@lang('messages.nav.back')</a>
   </div>
 
-  {{-- Card --}}
   <form action="{{ route('admin.medicos.store') }}" method="POST"
         class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200/60 p-6 sm:p-8">
     @csrf
@@ -21,10 +19,9 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <div>
         <x-form.input
-          id="name"
-          name="name"
-          label="Nome"
-          placeholder="Nome completo"
+          id="name" name="name"
+          :label="__('messages.profile.name')"
+          :placeholder="__('messages.doctors.name_ph')"
           icon="components.icons.admin.user"
           required
         />
@@ -33,11 +30,9 @@
 
       <div>
         <x-form.input
-          id="email"
-          name="email"
-          type="email"
-          label="Email"
-          placeholder="exemplo@dominio.com"
+          id="email" name="email" type="email"
+          :label="__('messages.profile.email')"
+          :placeholder="__('messages.doctors.email_ph')"
           icon="components.icons.admin.email"
           required
         />
@@ -46,10 +41,8 @@
 
       <div>
         <x-form.input
-          id="password"
-          name="password"
-          type="password"
-          label="Password"
+          id="password" name="password" type="password"
+          :label="__('messages.profile.password_new')"
           placeholder="•••••••••"
           icon="components.icons.admin.lock"
           required
@@ -59,10 +52,8 @@
 
       <div>
         <x-form.input
-          id="password_confirmation"
-          name="password_confirmation"
-          type="password"
-          label="Confirmar Password"
+          id="password_confirmation" name="password_confirmation" type="password"
+          :label="__('messages.profile.password_confirm')"
           placeholder="•••••••••"
           icon="components.icons.admin.lock"
           required
@@ -73,101 +64,85 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
       <div>
         <x-form.input
-            id="crm"
-            name="crm"
-            label="CRM"
-            placeholder="Ex.: CRM123"
-            icon="components.icons.admin.id"
-            required
+          id="crm" name="crm" label="CRM"
+          :placeholder="__('messages.doctors.crm_ph')"
+          icon="components.icons.admin.id"
+          required
         />
-        <p class="text-xs text-gray-500 mt-1">Deve ser único.</p>
-        @error('crm')
-            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-        @enderror
+        <p class="text-xs text-gray-500 mt-1">@lang('messages.doctors.unique_hint')</p>
+        @error('crm') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
       </div>
 
       <div>
         <x-form.textarea
-          id="bio"
-          name="bio"
-          label="Bio"
-          placeholder="Breve apresentação do médico"
-          icon="components.icons.admin.info"
-          rows="2"
+          id="bio" name="bio"
+          :label="__('messages.doctors.bio')" :placeholder="__('messages.doctors.bio_ph')"
+          icon="components.icons.admin.info" rows="2"
         />
         @error('bio') <p class="text-sm text-red-600 -mt-2 mb-2">{{ $message }}</p> @enderror
       </div>
     </div>
 
-    {{-- Especialidades (uma box com chips + input + dropdown) --}}
     @php
-    $espBase = 'esp'; // id base — precisa bater com o JS
-    $oldSelected = collect(old('especialidades', []))->map(fn($v)=>(string)$v)->all();
+      $espBase = 'esp';
+      $oldSelected = collect(old('especialidades', []))->map(fn($v)=>(string)$v)->all();
     @endphp
 
     <div class="sm:col-span-2">
-    <label class="block text-sm font-medium text-zinc-700 mb-1">Especialidades</label>
+      <label class="block text-sm font-medium text-zinc-700 mb-1">@lang('messages.nav.specialties')</label>
 
-    {{-- Caixa única (chips + input) --}}
-    <div id="{{ $espBase }}-box"
-        class="relative">
+      <div id="{{ $espBase }}-box" class="relative">
         <div id="{{ $espBase }}-control"
-            class="min-h-[44px] w-full flex flex-wrap items-center gap-2 rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 focus-within:ring-2 focus-within:ring-medigest focus-within:border-medigest">
-        {{-- chips (se veio old()) --}}
-        @foreach($especialidades as $esp)
+             class="min-h-[44px] w-full flex flex-wrap items-center gap-2 rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 focus-within:ring-2 focus-within:ring-medigest focus-within:border-medigest">
+
+          {{-- Chips vindas do old() --}}
+          @foreach($especialidades as $esp)
             @if(in_array((string)$esp->id, $oldSelected))
-            <span class="esp-chip inline-flex items-center gap-2 rounded-md bg-blue-50 text-blue-700 text-sm px-2.5 py-1"
+              <span class="esp-chip inline-flex items-center gap-2 rounded-md bg-blue-50 text-blue-700 text-sm px-2.5 py-1"
                     data-id="{{ $esp->id }}" data-text="{{ $esp->nome }}">
                 {{ $esp->nome }}
-                <button type="button" class="esp-chip-remove text-blue-700/70 hover:text-blue-900" aria-label="Remover">&times;</button>
-            </span>
+                <button type="button" class="esp-chip-remove text-blue-700/70 hover:text-blue-900" aria-label="@lang('messages.actions.delete')">&times;</button>
+              </span>
             @endif
-        @endforeach
+          @endforeach
 
-        {{-- input dentro da mesma box --}}
-        <input id="{{ $espBase }}-input" type="text" autocomplete="off"
-                placeholder="Selecione especialidades…"
-                class="flex-1 min-w-[140px] border-0 focus:ring-0 focus:outline-none text-sm text-gray-900 placeholder:text-gray-400">
-        <button type="button" id="{{ $espBase }}-toggle"
-                class="px-2 text-gray-500 hover:text-gray-700">▼</button>
+          <input id="{{ $espBase }}-input" type="text" autocomplete="off"
+                 placeholder="{{ __('messages.doctors.select_specialties_ph') }}"
+                 class="flex-1 min-w-[140px] border-0 focus:ring-0 focus:outline-none text-sm text-gray-900 placeholder:text-gray-400">
+          <button type="button" id="{{ $espBase }}-toggle" class="px-2 text-gray-500 hover:text-gray-700">▼</button>
         </div>
 
-        {{-- Dropdown --}}
         <div id="{{ $espBase }}-dd"
-            class="absolute z-50 mt-2 hidden w-full max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow">
-        <ul id="{{ $espBase }}-list" class="py-1">
+             class="absolute z-50 mt-2 hidden w-full max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow">
+          <ul id="{{ $espBase }}-list" class="py-1">
             @foreach($especialidades as $esp)
-            <li class="esp-item cursor-pointer px-3 py-2 hover:bg-gray-50"
-                data-id="{{ $esp->id }}" data-text="{{ $esp->nome }}">
+              <li class="esp-item cursor-pointer px-3 py-2 hover:bg-gray-50"
+                  data-id="{{ $esp->id }}" data-text="{{ $esp->nome }}">
                 {{ $esp->nome }}
-            </li>
+              </li>
             @endforeach
-        </ul>
-        <div class="border-t border-gray-200 p-2 text-xs text-gray-500">
-            Clica para adicionar. Escreve para filtrar. Enter também adiciona o primeiro resultado.
+          </ul>
+          <div class="border-t border-gray-200 p-2 text-xs text-gray-500">
+            @lang('messages.doctors.multiselect_hint')
+          </div>
         </div>
-        </div>
-    </div>
+      </div>
 
-    {{-- Hidden inputs para o POST --}}
-    <div id="{{ $espBase }}-hidden">
+      <div id="{{ $espBase }}-hidden">
         @foreach($oldSelected as $sid)
-        <input type="hidden" name="especialidades[]" value="{{ $sid }}" data-id="{{ $sid }}">
+          <input type="hidden" name="especialidades[]" value="{{ $sid }}" data-id="{{ $sid }}">
         @endforeach
+      </div>
+
+      @error('especialidades') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+      <p class="text-xs text-gray-500 mt-2">@lang('messages.doctors.multi_select_hint')</p>
     </div>
 
-    @error('especialidades')
-        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-    @enderror
-    <p class="text-xs text-gray-500 mt-2">Podes selecionar múltiplas especialidades.</p>
-    </div>
-
-    {{-- AÇÕES --}}
     <div class="mt-8 flex items-center gap-3">
-      <button class="px-5 py-2.5 rounded-xl bg-home-medigest text-white hover:bg-home-medigest-hover">
-        Criar
+      <button class="px-5 py-2.5 rounded-2xl text-white bg-home-medigest hover:bg-home-medigest-hover">
+        @lang('messages.actions.confirm')
       </button>
-      <a href="{{ route('admin.medicos.index') }}" class="text-gray-600 hover:underline">Cancelar</a>
+      <a href="{{ route('admin.medicos.index') }}" class="text-gray-700 hover:text-gray-900 hover:underline">@lang('messages.actions.cancel')</a>
     </div>
   </form>
 </div>

@@ -17,8 +17,17 @@ use App\Http\Controllers\Api\SlotsController as ApiSlotsController;
 use App\Http\Controllers\Api\ConsultaTiposController as ApiConsultaTiposController;
 use App\Http\Middleware\CheckRole;
 
+use App\Http\Controllers\Account\ProfileController;
+use App\Http\Controllers\Account\SettingsController;
+use App\Http\Controllers\AvatarController; // 👈 NOVO
+
 // PÁGINA INICIAL
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// 👇 Avatar fallback (público, cacheável)
+Route::get('/avatar/{user}.svg', [AvatarController::class, 'initials'])
+    ->whereNumber('user')
+    ->name('avatar.initials');
 
 // Auth (guests)
 Route::middleware('guest')->group(function () {
@@ -78,7 +87,9 @@ Route::middleware(['auth', CheckRole::class . ':admin'])
         Route::get('/consultas/criar', [AdminConsultaController::class, 'create'])->name('admin.consultas.create');
         Route::post('/consultas', [AdminConsultaController::class, 'store'])->name('admin.consultas.store');
         Route::post('/consultas/{consulta}/cancelar', [AdminConsultaController::class, 'cancelar'])->name('admin.consultas.cancelar');
-        
+
+        Route::get('/dashboard/charts', [AdminDashboardController::class, 'charts'])
+            ->name('admin.dashboard.charts');
     });
 
 // MÉDICO
@@ -103,4 +114,21 @@ Route::middleware(['auth', CheckRole::class . ':paciente'])->group(function () {
     Route::post('/consultas', [PacienteConsultaController::class, 'store'])->name('paciente.consultas.store');
     Route::post('/consultas/{consulta}/cancelar', [PacienteConsultaController::class, 'cancelar'])->name('paciente.consultas.cancelar');
 
+});
+
+// ====== CONTA (Perfil & Configurações) ======
+Route::middleware(['auth'])->group(function () {
+    // Perfil
+    Route::get('/account/profile',  [ProfileController::class, 'edit'])
+        ->name('account.profile');
+    Route::put('/account/profile',  [ProfileController::class, 'update'])
+        ->name('account.profile.update');
+    Route::put('/account/password', [ProfileController::class, 'updatePassword'])
+        ->name('account.password.update');
+
+    // Configurações
+    Route::get('/account/settings', [SettingsController::class, 'edit'])
+        ->name('account.settings');
+    Route::put('/account/settings', [SettingsController::class, 'update'])
+        ->name('account.settings.update');
 });

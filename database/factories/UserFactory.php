@@ -29,8 +29,19 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            //new
+            'phone'    => fake()->numerify('9########'),
+            'settings' => [
+                'theme'         => 'system',
+                'language'      => 'pt-PT',
+                'notify_email'  => true,
+                'notify_push'   => false,
+                'weekly_digest' => true,
+            ],
+            // 'avatar_path' continua NULL por padrão (usamos o fallback ui-avatars no layout)
         ];
     }
+
 
     /**
      * Indicate that the model's email address should be unverified.

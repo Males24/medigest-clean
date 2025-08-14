@@ -24,7 +24,7 @@
                         aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom-end">
                     <span class="sr-only">Abrir menu do utilizador</span>
                     <img class="w-10 h-10 rounded-full object-cover"
-                         src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=DFF3EE&color=0D8ABC"
+                         src="{{ auth()->user()->avatar_url }}"
                          alt="{{ auth()->user()->name }}">
                 </button>
 

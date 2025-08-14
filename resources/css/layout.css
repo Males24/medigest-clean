@@ -1,0 +1,46 @@
+/* resources/css/layout.css
+   Regras do layout (header + sidebar mobile) */
+
+/* Fallback da altura do header; o JS atualiza isto em runtime */
+:root { --header-h: 64px; }
+
+/* Mobile: sidebar por baixo do header, overlay só no conteúdo */
+@media (max-width: 1023.98px) {
+  #layout-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-h);
+    height: calc(100vh - var(--header-h));
+    transform: translateX(-100%);        /* fechado por defeito */
+    transition: transform 200ms ease;
+    will-change: transform;
+  }
+
+  /* aberto (classe aplicada pelo JS no <body>) */
+  body.sidebar-open #layout-sidebar {
+    transform: translateX(0);
+  }
+
+  /* overlay */
+  #sidebar-scrim {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: var(--header-h);
+    height: calc(100vh - var(--header-h));
+    background: rgb(0 0 0 / 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+
+  body.sidebar-open #sidebar-scrim {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* bloquear scroll do fundo quando o menu abre */
+  body.sidebar-open {
+    overflow: hidden;
+  }
+}

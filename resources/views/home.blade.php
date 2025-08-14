@@ -115,7 +115,7 @@
     </section>
     {{-- FUNCIONALIDADES --}}
     <section class="py-20 bg-zinc-50 text-center border-t-4 border-zinc-100">
-        <h2 class="text-3xl font-semibold mb-10">Por que escolher o MediGest+</h2>
+        <h2 class="text-3xl font-semibold mb-10">Porque escolher o MediGest+</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto px-4">
             <div class="p-6 bg-white rounded-xl shadow hover:shadow-md transition">
                 <h3 class="text-xl font-semibold mt-4">Fácil de usar</h3>

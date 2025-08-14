@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ParametrosAgendamentoSeeder::class,
             HorarioSeeder::class,
             ConfiguracaoHorarioSeeder::class,
+            BackfillUserFieldsSeeder::class,
         ]);
     }
 }
