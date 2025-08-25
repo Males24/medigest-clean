@@ -11,35 +11,32 @@ use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Dashboard do administrador: KPIs + API para gráficos.
+ */
 class DashboardController extends Controller
 {
+    /** Ecrã principal com KPIs simples. */
     public function index()
     {
-        // KPIs do topo
-        $totUsers      = Paciente::count(); // todos os utilizadores
+        $totUsers      = Paciente::count();
         $totMedicos    = Medico::count();
         $totConsultas  = Consulta::whereIn('estado', ['agendada','confirmada','pendente_medico'])->count();
         $consultasHoje = Consulta::whereDate('data', now()->toDateString())->count();
-        $consultasMes  = Consulta::whereYear('data', now()->year)
-                                 ->whereMonth('data', now()->month)
-                                 ->count();
+        $consultasMes  = Consulta::whereYear('data', now()->year)->whereMonth('data', now()->month)->count();
 
         return view('admin.dashboard', compact(
             'totUsers','totMedicos','totConsultas','consultasHoje','consultasMes'
         ));
     }
 
-    /**
-     * Endpoint JSON para os gráficos do dashboard.
-     * GET /admin/dashboard/charts?start=YYYY-MM-DD&end=YYYY-MM-DD
-     */
+    /** API JSON /admin/dashboard/charts para alimentar os gráficos. */
     public function charts(Request $r)
     {
-        // Por defeito: últimos 30 dias ATÉ +30 dias (inclui futuras)
         $start = Carbon::parse($r->get('start', now()->subDays(30)->toDateString()))->startOfDay();
         $end   = Carbon::parse($r->get('end',   now()->addDays(30)->toDateString()))->endOfDay();
 
-        // 1) Consultas por dia (preenche dias sem registos com zero)
+        // 1) Consultas por dia (preenche zeros)
         $rawByDay = Consulta::select('data', DB::raw('COUNT(*) as total'))
             ->whereBetween('data', [$start->toDateString(), $end->toDateString()])
             ->groupBy('data')->orderBy('data')
@@ -58,7 +55,7 @@ class DashboardController extends Controller
             ->groupBy('estado')
             ->pluck('total','estado');
 
-        // 3) Top especialidades no período
+        // 3) Top especialidades
         $byEsp = Consulta::join('especialidades','consultas.especialidade_id','=','especialidades.id')
             ->whereBetween('consultas.data', [$start->toDateString(), $end->toDateString()])
             ->select('especialidades.nome as label', DB::raw('COUNT(*) as total'))

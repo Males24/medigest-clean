@@ -1,12 +1,12 @@
 // resources/js/layout/sidebar.js
 document.addEventListener('DOMContentLoaded', () => {
   const header   = document.querySelector('header');
-  const toggleBtn= document.getElementById('sidebar-toggle');
+  const sidebar  = document.getElementById('layout-sidebar');
   const scrim    = document.getElementById('sidebar-scrim');
-  const mqLg     = window.matchMedia('(min-width: 1024px)');
-  if (!toggleBtn || !scrim) return;
+  const toggle   = document.getElementById('sidebar-toggle');
+  if (!sidebar || !toggle || !scrim) return;
 
-  // manter o sidebar alinhado ao header (CSS usa --header-h)
+  // actualiza --header-h para o overlay mobile
   const setHeaderVar = () => {
     const h = header?.offsetHeight || 64;
     document.documentElement.style.setProperty('--header-h', `${h}px`);
@@ -14,15 +14,49 @@ document.addEventListener('DOMContentLoaded', () => {
   setHeaderVar();
   window.addEventListener('resize', setHeaderVar);
 
-  const open  = () => { document.body.classList.add('sidebar-open');  toggleBtn.setAttribute('aria-expanded','true');  };
-  const close = () => { document.body.classList.remove('sidebar-open'); toggleBtn.setAttribute('aria-expanded','false'); };
+  const mqLg = window.matchMedia('(min-width: 1024px)');
+  const isDesktop = () => mqLg.matches;
 
-  toggleBtn.addEventListener('click', (e)=>{ e.preventDefault(); document.body.classList.contains('sidebar-open') ? close() : open(); });
-  scrim.addEventListener('click', close);
-  document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') close(); });
+  // estado inicial de colapso (desktop)
+  const savedCollapsed = localStorage.getItem('sidebar:collapsed') === '1';
+  if (savedCollapsed) sidebar.classList.add('is-collapsed');
 
-  // em desktop, fecha (fica visível por CSS sem overlay)
-  const sync = () => { if (mqLg.matches) close(); };
-  sync();
-  mqLg.addEventListener?.('change', sync);
+  const collapseDesktop = (toCollapsed) => {
+    if (toCollapsed) {
+      sidebar.classList.add('is-collapsed');
+      localStorage.setItem('sidebar:collapsed', '1');
+    } else {
+      sidebar.classList.remove('is-collapsed');
+      localStorage.setItem('sidebar:collapsed', '0');
+    }
+  };
+
+  // abrir/fechar mobile overlay
+  const openMobile = () => { document.body.classList.add('sidebar-open');  toggle.setAttribute('aria-expanded','true');  };
+  const closeMobile = () => { document.body.classList.remove('sidebar-open'); toggle.setAttribute('aria-expanded','false'); };
+
+  // clique no botão
+  toggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (isDesktop()) {
+      collapseDesktop(!sidebar.classList.contains('is-collapsed'));
+    } else {
+      if (document.body.classList.contains('sidebar-open')) closeMobile(); else openMobile();
+    }
+  });
+
+  // scrim fecha mobile e repõe colapso guardado
+  scrim.addEventListener('click', () => {
+    closeMobile();
+    const wasCollapsed = localStorage.getItem('sidebar:collapsed') === '1';
+    if (wasCollapsed) sidebar.classList.add('is-collapsed');
+  });
+
+  // Esc fecha mobile
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobile(); });
+
+  // quando muda para desktop, garante que o overlay fecha
+  const syncMode = () => { if (isDesktop()) closeMobile(); };
+  mqLg.addEventListener?.('change', syncMode);
+  syncMode();
 });

@@ -17,9 +17,15 @@
     @csrf @method('PUT')
 
     <div>
-      <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">@lang('messages.specialties.name')</label>
-      <input id="nome" type="text" name="nome" value="{{ old('nome', $especialidade->nome) }}"
-             class="w-full rounded-xl border-gray-300 focus:border-home-medigest-button focus:ring-home-medigest-button" required>
+      <x-form.input
+        id="nome"
+        name="nome"
+        :label="__('messages.specialties.name')"
+        :placeholder="__('messages.specialties.name_ph')"
+        icon="components.icons.admin.book"
+        value="{{ old('nome', $especialidade->nome) }}"
+        class="block text-sm font-medium text-gray-700 mb-1"
+      />
       @error('nome') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
     </div>
 

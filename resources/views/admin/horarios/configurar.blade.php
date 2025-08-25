@@ -147,5 +147,5 @@
   </form>
 </div>
 
-@vite('resources/js/pages/horarios-admin-configurar.js')
+@vite('resources/js/pages/admin/horarios/horarios-admin-configurar.js')
 @endsection

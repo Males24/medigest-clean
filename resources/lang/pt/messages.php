@@ -18,6 +18,7 @@ return [
         'all_consultations'  => 'Todas as Consultas',
         'specialties'        => 'Especialidades',
         'create_doctor'      => 'Criar Médico',
+        'calendar'           => 'Calendário',
         'schedules'          => 'Horários',
         'profile'            => 'Perfil',
         'settings'           => 'Configurações',
@@ -35,11 +36,13 @@ return [
         'confirm'            => 'Confirmar',
         'edit'               => 'Editar',
         'delete'             => 'Eliminar',
+        'clear'              => 'Limpar',
         'search'             => 'Pesquisar',
         'apply'              => 'Aplicar',
         'close'              => 'Fechar',
         'change_photo'       => 'Alterar foto',
         'remove_photo'       => 'Remover foto',
+        'view'               => 'Ver',
         // opcionais (para wizards/form selects)
         'next'               => 'Seguinte',
         'back'               => 'Anterior',
@@ -269,5 +272,14 @@ return [
             'question' => 'Tens a certeza que queres apagar a especialidade “:name”?',
             'yes'      => 'Sim, apagar',
         ],
+    ],
+
+    'calendar' => [
+        'title' => 'Calendário',
+        'today' => 'Hoje',
+        'month' => 'Mês',
+        'week'  => 'Semana',
+        'day'   => 'Dia',
+        'list'  => 'Agenda', // ou 'Lista'
     ],
 ];

@@ -16,6 +16,7 @@ return [
         'all_consultations'  => 'Todas las Consultas',
         'specialties'        => 'Especialidades',
         'create_doctor'      => 'Crear Médico',
+        'calendar'           => 'Calendario',
         'schedules'          => 'Horarios',
         'profile'            => 'Perfil',
         'settings'           => 'Configuraciones',
@@ -32,11 +33,13 @@ return [
         'confirm'            => 'Confirmar',
         'edit'               => 'Editar',
         'delete'             => 'Eliminar',
+        'clear'              => 'Limpiar',
         'search'             => 'Buscar',
         'apply'              => 'Aplicar',
         'close'              => 'Cerrar',
         'change_photo'       => 'Cambiar foto',
         'remove_photo'       => 'Eliminar foto',
+        'view'               => 'Ver',
         // extras
         'next'               => 'Siguiente',
         'back'               => 'Anterior',
@@ -256,4 +259,12 @@ return [
         ],
     ],
 
+    'calendar' => [
+        'title' => 'Calendario',
+        'today' => 'Hoy',
+        'month' => 'Mes',
+        'week'  => 'Semana',
+        'day'   => 'Día',
+        'list'  => 'Agenda', // o 'Lista'
+    ],
 ];

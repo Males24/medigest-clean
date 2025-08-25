@@ -1,46 +1,47 @@
-/* resources/css/layout.css
-   Regras do layout (header + sidebar mobile) */
-
-/* Fallback da altura do header; o JS atualiza isto em runtime */
+/* resources/css/layout.css */
+/* Altura do header para posicionar overlay/aside em mobile; JS atualiza isto */
 :root { --header-h: 64px; }
 
-/* Mobile: sidebar por baixo do header, overlay só no conteúdo */
+/* ===== Sidebar (desktop) =================================================== */
+#layout-sidebar { width: 16rem; transition: width .2s ease; }
+#layout-sidebar.is-collapsed { width: 4.7rem; }
+#layout-sidebar.is-collapsed:hover { width: 16rem; }
+
+/* Títulos das secções (GERAL, CONSULTAS, ...) */
+#layout-sidebar [aria-labelledby^="grp-"] > h3 { transition: all .2s ease; }
+#layout-sidebar.is-collapsed [aria-labelledby^="grp-"] > h3 { opacity: 0; transform: translateX(-.5rem); }
+#layout-sidebar.is-collapsed:hover [aria-labelledby^="grp-"] > h3 { opacity: 1; transform: none; }
+
+/* Labels do menu (texto) */
+#layout-sidebar .sidebar-label {
+  overflow: hidden; white-space: nowrap; transition: all .2s ease;
+  max-width: 12rem; opacity: 1; margin-left: .75rem; /* ml-3 */
+}
+#layout-sidebar.is-collapsed .sidebar-label { max-width: 0; opacity: 0; margin-left: 0; }
+#layout-sidebar.is-collapsed:hover .sidebar-label { max-width: 12rem; opacity: 1; margin-left: .75rem; }
+
+/* Overlay base (desktop fica escondido) */
+#sidebar-scrim { top: var(--header-h); bottom: 0; opacity: 0; pointer-events: none; transition: opacity .15s; }
+#sidebar-scrim.is-active { opacity: 1; pointer-events: auto; } /* backup, caso uses esta classe */
+
+/* ===== Mobile (<= 1024px) ================================================= */
 @media (max-width: 1023.98px) {
   #layout-sidebar {
-    position: fixed;
-    left: 0;
-    top: var(--header-h);
+    position: fixed; left: 0; top: var(--header-h);
     height: calc(100vh - var(--header-h));
-    transform: translateX(-100%);        /* fechado por defeito */
-    transition: transform 200ms ease;
-    will-change: transform;
+    transform: translateX(-100%); transition: transform 200ms ease; will-change: transform;
   }
+  body.sidebar-open #layout-sidebar { transform: translateX(0); }
 
-  /* aberto (classe aplicada pelo JS no <body>) */
-  body.sidebar-open #layout-sidebar {
-    transform: translateX(0);
-  }
-
-  /* overlay */
+  /* overlay mobile */
   #sidebar-scrim {
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: var(--header-h);
-    height: calc(100vh - var(--header-h));
-    background: rgb(0 0 0 / 0.4);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 200ms ease;
+    position: fixed; left: 0; right: 0;
+    top: var(--header-h); height: calc(100vh - var(--header-h));
+    background: rgb(0 0 0 / .40);
   }
+  body.sidebar-open #sidebar-scrim { opacity: 1; pointer-events: auto; }
+  body.sidebar-open { overflow: hidden; }
 
-  body.sidebar-open #sidebar-scrim {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  /* bloquear scroll do fundo quando o menu abre */
-  body.sidebar-open {
-    overflow: hidden;
-  }
+  /* neutraliza colapso em mobile (sidebar abre sempre normal) */
+  #layout-sidebar.is-collapsed { width: 16rem; }
 }

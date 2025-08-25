@@ -1,0 +1,119 @@
+/* ===== Variáveis + lock de scroll ===== */
+:root{
+  --auth-notch-cut: 55px;   /* podes subir p/ 60–65 se quiseres um corte maior */
+  --auth-radius: 28px;
+}
+
+html.modal-open, body.modal-open{ overflow:hidden; touch-action:none; }
+
+/* Overlay: respiro responsivo e safe-areas */
+.mz-overlay{ display:grid; place-items:center; padding:clamp(12px, 2.5vw, 24px); }
+@supports(padding:max(0px)){
+  .mz-overlay{
+    padding:
+      max(12px, env(safe-area-inset-top) + 12px)
+      max(12px, env(safe-area-inset-right) + 12px)
+      max(12px, env(safe-area-inset-bottom) + 12px)
+      max(12px, env(safe-area-inset-left) + 12px);
+  }
+}
+
+/* Conteúdo com micro-animação (respeitando reduced motion) */
+.mz-overlay .modal-content{ will-change:transform,opacity; animation:modalIn .18s ease-out both; }
+@media (prefers-reduced-motion:reduce){ .mz-overlay .modal-content{ animation:none; } }
+@keyframes modalIn{ from{ transform:translateY(6px) scale(.985); opacity:0; } to{ transform:none; opacity:1; } }
+
+
+/* Painel da imagem: sem blur, mais alto. A sombra é suave. */
+.img-panel{
+  filter: drop-shadow(0 24px 40px rgba(0,0,0,.18)) drop-shadow(0 6px 14px rgba(0,0,0,.08));
+  background: transparent;
+}
+
+/* Botão fechar e z-layers consistentes */
+.auth-modal .mz-x{
+  position:absolute; top:12px; right:12px; z-index:80; /* acima de tudo */
+  inline-size:40px; block-size:40px; border-radius:999px;
+  display:grid; place-items:center; font-size:20px; line-height:1;
+  background:color-mix(in oklab, white 75%, transparent);
+  box-shadow:0 1px 10px rgba(0,0,0,.10);
+}
+.auth-modal .mz-x:hover{ background:color-mix(in oklab, white 85%, transparent); }
+.auth-modal .mz-x:focus-visible{ outline:3px solid rgb(16 185 129); outline-offset:2px; }
+
+.auth-modal .img-col{ position:relative; z-index:30; }
+
+/* ===== (herdado) recorte diagonal, caso uses o layout com notch ===== */
+.auth-modal .img-card{ --cut:var(--auth-notch-cut); }
+.shape-diag-tr{
+  display:block; width:100%; height:100%; object-fit:cover;
+  clip-path:polygon(0 0, calc(100% - var(--auth-notch-cut)) 0, 100% var(--auth-notch-cut), 100% 100%, 0 100%);
+}
+@supports not (clip-path: polygon(0 0,100% 0,100% 100%,0 100%)){
+  .shape-diag-tr{ clip-path:none; border-top-right-radius:var(--auth-radius); }
+}
+.img-card.notch-ring{
+  position:relative; overflow:hidden; border-radius:22px; background:transparent; isolation:isolate;
+  filter: drop-shadow(0 16px 28px rgba(0,0,0,.10)) drop-shadow(0 3px 8px rgba(0,0,0,.05));
+}
+.img-card.notch-ring::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  clip-path:polygon(0 0, calc(100% - var(--auth-notch-cut)) 0, 100% var(--auth-notch-cut), 100% 100%, 0 100%);
+  outline:1px solid rgba(0,0,0,.06); outline-offset:-1px; border-radius:22px; background:transparent;
+}
+.img-card.notch-ring::before{
+  content:""; position:absolute; top:0; right:0;
+  width:calc(var(--auth-notch-cut) + 6px); height:calc(var(--auth-notch-cut) + 6px);
+  background:linear-gradient(135deg, rgba(0,0,0,.06), rgba(0,0,0,0) 60%);
+  clip-path:polygon(100% 0, 100% 100%, 0 0); pointer-events:none;
+}
+@media (max-width:640px){ .auth-modal .img-card{ --cut:36px; } }
+
+/* Dark mode global (se tiveres .dark no html) */
+.dark .modal-content{ background:rgba(24,24,27,.92); border-color:#3f3f46; color:#e4e4e7; }
+.dark .auth-modal .mz-x{ background:color-mix(in oklab, #27272a 70%, transparent); color:#fafafa; }
+
+/* ===== Toggle olho: só 2 SVGs ===== */
+button[data-icon-toggle][data-state="shown"] .icon-eye-off{ display:none; }
+button[data-icon-toggle][data-state="hidden"] .icon-eye{ display:none; }
+
+/* Botão do olho — skin claro (antigo) */
+button[data-icon-toggle]{
+  background:#fff;
+  border:1px solid #e4e4e7;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+  transition:background .15s, border-color .15s, box-shadow .15s, transform .15s;
+}
+button[data-icon-toggle]:hover{ background:#fafafa; border-color:#d4d4d8; }
+button[data-icon-toggle]:active{ transform:translateY(-50%) scale(.98); }
+.group:focus-within button[data-icon-toggle]{
+  border-color:rgb(16 185 129 / .5);
+  box-shadow:0 0 0 3px rgb(16 185 129 / .15);
+}
+
+/* ===== Skin escura específica deste template ===== */
+.auth-dark .mz-x{
+  background:color-mix(in oklab, white 12%, transparent);
+  color:#e5e7eb;
+  box-shadow:0 8px 30px rgba(0,0,0,.35);
+}
+.auth-dark .mz-x:hover{ background:color-mix(in oklab, white 18%, transparent); }
+
+/* botão do olho dentro do tema escuro */
+.auth-dark button[data-icon-toggle]{
+  background: color-mix(in oklab, white 10%, transparent);
+  color: #e5e7eb;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 1px 1px rgba(0,0,0,.2), inset 0 0 0 0 rgba(255,255,255,.05);
+}
+.auth-dark button[data-icon-toggle]:hover{
+  background: color-mix(in oklab, white 14%, transparent);
+  border-color: rgba(255,255,255,.2);
+}
+.auth-dark .group:focus-within button[data-icon-toggle]{
+  border-color: rgb(16 185 129 / .5);
+  box-shadow: 0 0 0 3px rgb(16 185 129 / .20);
+}
+
+/* Desativa a animação de entrada quando a página marcar o HTML com .modal-no-anim */
+html.modal-no-anim .mz-overlay .modal-content{ animation:none !important; }

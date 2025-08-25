@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import './layout.css';
 @import './modal.css';
+@import './auth-modal-wave.css';
+@import './calendar.css';
 
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

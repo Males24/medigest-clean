@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ConsultaTipo;
 
+/**
+ * API: Metadados dos tipos de consulta.
+ */
 class ConsultaTiposController extends Controller
 {
-    /**
-     * GET /api/consulta-tipos/{slug}
-     * Devolve metadados do tipo de consulta para o frontend.
-     */
+    /** GET /api/consulta-tipos/{slug} */
     public function show(string $slug)
     {
         $tipo = ConsultaTipo::where('slug', $slug)->where('ativo', true)->first();
@@ -29,10 +29,7 @@ class ConsultaTiposController extends Controller
         ]);
     }
 
-    /**
-     * (Opcional) GET /api/consulta-tipos
-     * Lista todos os tipos ativos.
-     */
+    /** (Opcional) GET /api/consulta-tipos — lista todos os ativos. */
     public function index()
     {
         $tipos = ConsultaTipo::where('ativo', true)

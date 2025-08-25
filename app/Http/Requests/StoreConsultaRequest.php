@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreConsultaRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StoreConsultaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Garante que apenas utilizadores autenticados podem criar consulta
+        // Se quiseres apertar: return auth()->check() && auth()->user()->role === 'paciente';
         return auth()->check();
     }
 
@@ -22,26 +23,45 @@ class StoreConsultaRequest extends FormRequest
      */
     public function rules(): array
     {
+        $role = auth()->user()?->role;
+
         return [
-            'medico_id'      => ['required', 'exists:users,id'],
-            'data'           => ['required', 'date', 'after_or_equal:today'],
-            'hora'           => ['required', 'date_format:H:i'],
-            'tipo'           => ['required', 'in:normal,prioritaria'],
-            'duracao'        => ['required', 'integer', 'min:15', 'max:120'],
-            'especialidade_id' => ['nullable', 'exists:especialidades,id'],
-            'motivo'         => ['nullable', 'string', 'max:255'],
+            // Paciente só não envia paciente_id; admin/médico têm de escolher um paciente
+            'paciente_id'      => [$role === 'paciente' ? 'sometimes' : 'required', 'integer', 'exists:users,id'],
+
+            'especialidade_id' => ['required','integer','exists:especialidades,id'],
+            'medico_id'        => ['required','integer','exists:users,id'],  // users.id do médico
+            'tipo_slug'        => ['required', Rule::in(['normal','prioritaria','urgente'])],
+            'data'             => ['required','date_format:Y-m-d','after_or_equal:today'],
+            'hora'             => ['required','date_format:H:i'],
+
+            // opcional (é calculada pelo tipo mas pode vir do form)
+            'duracao'          => ['sometimes','integer','min:10','max:180'],
+
+            // textarea
+            'descricao'        => ['nullable','string','max:400'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'medico_id.required' => 'Selecione um médico.',
-            'medico_id.exists'   => 'O médico selecionado não existe.',
-            'data.required'      => 'Escolha a data da consulta.',
-            'data.after_or_equal'=> 'A data deve ser hoje ou futura.',
-            'hora.required'      => 'Escolha o horário da consulta.',
-            'tipo.in'            => 'O tipo de consulta deve ser normal ou prioritária.',
+            'paciente_id.required'      => 'Selecione o paciente.',
+            'paciente_id.exists'        => 'O paciente selecionado não existe.',
+
+            'especialidade_id.required' => 'Selecione a especialidade.',
+            'especialidade_id.exists'   => 'A especialidade selecionada não existe.',
+
+            'medico_id.required'        => 'Selecione um médico.',
+            'medico_id.exists'          => 'O médico selecionado não existe.',
+
+            'tipo_slug.required'        => 'Selecione o tipo de consulta.',
+            'tipo_slug.in'              => 'Tipo de consulta inválido.',
+
+            'data.required'             => 'Escolha a data da consulta.',
+            'data.after_or_equal'       => 'A data deve ser hoje ou futura.',
+
+            'hora.required'             => 'Escolha o horário da consulta.',
         ];
     }
 }

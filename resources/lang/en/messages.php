@@ -16,6 +16,7 @@ return [
         'all_consultations'  => 'All Consultations',
         'specialties'        => 'Specialties',
         'create_doctor'      => 'Create Doctor',
+        'calendar'           => 'Calendar',
         'schedules'          => 'Schedules',
         'profile'            => 'Profile',
         'settings'           => 'Settings',
@@ -32,11 +33,13 @@ return [
         'confirm'            => 'Confirm',
         'edit'               => 'Edit',
         'delete'             => 'Delete',
+        'clear'              => 'Clear',
         'search'             => 'Search',
         'apply'              => 'Apply',
         'close'              => 'Close',
         'change_photo'       => 'Change photo',
         'remove_photo'       => 'Remove photo',
+        'view'               => 'View',
         // extras used in wizards/forms
         'next'               => 'Next',
         'back'               => 'Back',
@@ -256,4 +259,12 @@ return [
         ],
     ],
 
+    'calendar' => [
+        'title' => 'Calendar',
+        'today' => 'Today',
+        'month' => 'Month',
+        'week'  => 'Week',
+        'day'   => 'Day',
+        'list'  => 'List',
+    ],
 ];

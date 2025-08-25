@@ -1,0 +1,177 @@
+/* resources/css/calendar.css */
+/* ===========================
+   Calendário (Médico)
+   =========================== */
+
+/* ---------- Toolbar ---------- */
+#cal-toolbar .cal-btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+  cursor:pointer;
+  box-shadow: inset -2px -2px 6px rgba(255,255,255,.95), inset 3px 3px 8px rgba(15,23,42,.10), 0 1px 1px rgba(0,0,0,.02);
+}
+#cal-toolbar .cal-btn:hover{  background-color:#f9fafb; }
+#cal-toolbar .cal-btn:active{
+  background-color:#f3f4f6;
+  box-shadow: inset 2px 2px 6px rgba(15,23,42,.15), inset -2px -2px 6px rgba(255,255,255,.75);
+}
+#cal-toolbar .cal-btn:focus-visible{
+  outline:2px solid transparent;
+  box-shadow: 0 0 0 2px rgba(203,213,225,.75), inset -2px -2px 6px rgba(255,255,255,.95), inset 3px 3px 8px rgba(15,23,42,.10);
+}
+
+#cal-toolbar .cal-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:34px;padding:0 12px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;color:#111827;
+  font-size:.85rem;font-weight:500;
+  transition: background-color .15s ease, box-shadow .15s ease, border-color .15s ease;
+  box-shadow: inset -2px -2px 6px rgba(255,255,255,.95), inset 3px 3px 8px rgba(15,23,42,.10), 0 1px 1px rgba(0,0,0,.02);
+}
+#cal-toolbar .cal-chip:hover{  background-color:#f9fafb; }
+#cal-toolbar .cal-chip:active{
+  background-color:#f3f4f6;
+  box-shadow: inset 2px 2px 6px rgba(15,23,42,.15), inset -2px -2px 6px rgba(255,255,255,.75);
+}
+#cal-toolbar .cal-chip:focus-visible{
+  outline:2px solid transparent;
+  box-shadow: 0 0 0 2px rgba(203,213,225,.75), inset -2px -2px 6px rgba(255,255,255,.95), inset 3px 3px 8px rgba(15,23,42,.10);
+}
+
+#cal-toolbar [data-cal="view"][data-active="true"]{ background:#111827; color:#fff; }
+#cal-toolbar{ background-color:#f3f4f6; }
+
+/* ---------- FullCalendar: bordas e layout ---------- */
+.cal-card .fc{ --fc-border-color:#e5e7eb; }
+.cal-card .fc .fc-header-toolbar{ display:none; }
+.cal-card .fc .fc-scrollgrid{ border-width:0 !important; }
+.cal-card .fc .fc-col-header{ border-bottom:1px solid #e5e7eb; }
+.cal-card .fc-theme-standard td,
+.cal-card .fc-theme-standard th{ border-color:#e5e7eb; }
+
+/* Células altas para suportar várias consultas */
+.cal-card .fc .fc-daygrid-day-frame{ min-height:200px; }
+@media (min-width:1280px){
+  .cal-card .fc .fc-daygrid-day-frame{ min-height:240px; }
+}
+
+/* Cabeçalho do dia centrado (número) */
+.cal-card .fc .fc-daygrid-day-top{
+  display:flex; align-items:center; justify-content:center;
+  padding:10px 12px; text-align:center;
+}
+.cal-card .fc .fc-daygrid-day-number{ margin:0 auto; }
+
+/* ===== Manter evento DENTRO da célula e da pill ===== */
+.cal-card .fc .fc-daygrid-day-events,
+.cal-card .fc .fc-daygrid-event-harness{
+  overflow: hidden !important;       /* não sai da célula */
+}
+
+.cal-card .fc .fc-daygrid-event,
+.cal-card .fc .fc-daygrid-event .fc-event-main{
+  overflow: hidden !important;       /* não sai da pill */
+  white-space: normal !important;    /* permite quebra de linha */
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* ---------- Estilo das “pills” dos eventos ---------- */
+.cal-card .fc-event{ border:0; }
+
+/* conteúdo em 2 linhas */
+.cal-card .fc-event .ev-inner{
+  display:flex; flex-direction:column; align-items:flex-start; gap:.2rem;
+  padding:.40rem .80rem;
+  border-radius:12px;
+  font-size:.92rem; line-height:1.2; font-weight:500;
+  border:1px solid transparent;
+  width:100%; max-width:100%;
+  box-sizing:border-box;
+}
+.cal-card .fc-event .ev-lines{ display:flex; flex-direction:column; line-height:1.15; min-width:0; }
+.cal-card .fc-event .ev-line{ display:inline-flex; align-items:center; gap:.5rem; min-width:0; }
+.cal-card .fc-event .ev-dot{ width:.5rem; height:.5rem; border-radius:9999px; flex:0 0 auto; }
+.cal-card .fc-event .ev-time{ font-weight:700; line-height:1; overflow-wrap:anywhere; word-break:break-word; }
+.cal-card .fc-event .ev-patient{ font-size:.875rem; line-height:1.1; overflow-wrap:anywhere; word-break:break-word; }
+
+/* Cores */
+.cal-card .fc-event.ev--normal .ev-inner{ background:rgba(16,185,129,.18); color:#065f46; }
+.cal-card .fc-event.ev--normal .ev-dot{ background:#10b981; }
+
+.cal-card .fc-event.ev--urgente .ev-inner{ background:rgba(236,72,153,.18); color:#9d174d; }
+.cal-card .fc-event.ev--urgente .ev-dot{ background:#ec4899; }
+
+.cal-card .fc-event.ev--azul .ev-inner,
+.cal-card .fc-event.ev--info .ev-inner{ background:rgba(59,130,246,.18); color:#1e3a8a; }
+.cal-card .fc-event.ev--azul .ev-dot,
+.cal-card .fc-event.ev--info .ev-dot{ background:#3b82f6; }
+
+.cal-card .fc-event.ev--teal .ev-inner{ background:rgba(20,184,166,.18); color:#115e59; }
+.cal-card .fc-event.ev--teal .ev-dot{ background:#14b8a6; }
+
+.cal-card .fc-event.ev--amber .ev-inner{ background:rgba(245,158,11,.18); color:#92400e; }
+.cal-card .fc-event.ev--amber .ev-dot{ background:#f59e0b; }
+
+.cal-card .fc-event.ev--cancelada .ev-inner{ background:rgba(148,163,184,.20); color:#334155; opacity:.85; }
+.cal-card .fc-event.ev--cancelada .ev-dot{ background:#64748b; }
+
+.cal-card .fc-event:not(.ev--normal):not(.ev--urgente):not(.ev--azul):not(.ev--info):not(.ev--teal):not(.ev--amber):not(.ev--cancelada) .ev-inner{
+  background:rgba(99,102,241,.16); color:#3730a3;
+}
+.cal-card .fc-event:not(.ev--normal):not(.ev--urgente):not(.ev--azul):not(.ev--info):not(.ev--teal):not(.ev--amber):not(.ev--cancelada) .ev-dot{ background:#6366f1; }
+
+/* ===========================
+   Mobile tweaks (<= 640px)
+   =========================== */
+@media (max-width:640px){
+  #cal-toolbar{ padding-left:12px; padding-right:12px; }
+
+  .cal-card .fc .fc-daygrid-day-top{
+    justify-content:flex-start;
+    padding:6px 8px;
+  }
+  .cal-card .fc .fc-daygrid-day-number{ font-size:0.95rem; font-weight:600; margin:0; }
+
+  .cal-card .fc .fc-daygrid-day-frame{ min-height:110px; }
+  .cal-card .fc .fc-daygrid-event-harness{ margin:5px 6px; }
+  .cal-card .fc .fc-daygrid-day-events{ margin-top:4px; padding:0 2px; }
+
+  .cal-card .fc-event .ev-inner{ padding:.28rem .55rem; font-size:.82rem; line-height:1.15; }
+  .cal-card .fc-event .ev-line{ gap:.4rem; }
+  .cal-card .fc-event .ev-dot{ width:.4rem; height:.4rem; }
+  .cal-card .fc-event .ev-time{ font-size:.88rem; }
+  .cal-card .fc-event .ev-patient{ font-size:.78rem; line-height:1.05; }
+}
+
+/* ===== Prioridade ao scroll vertical em superfícies touch ===== */
+.cal-card .fc .fc-daygrid-day-frame,
+.cal-card .fc .fc-daygrid-day-events,
+.cal-card .fc .fc-daygrid-event-harness,
+.cal-card .fc .fc-daygrid-event,
+.cal-card .fc .fc-daygrid-event .fc-event-main,
+.cal-card .fc .fc-daygrid-event *{
+  touch-action: pan-y;
+}
+
+/* Evita seleção de texto durante o scroll (iOS/Android) */
+.cal-card .fc .fc-daygrid-event,
+.cal-card .fc .fc-timegrid-event{
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Suaviza o scroll em iOS dentro do contentor principal */
+#conteudo-principal { -webkit-overflow-scrolling: touch; }
+
+/* ===== Fallback para ecrãs ultra-estreitos ===== */
+@media (max-width: 340px) {
+  #medico-calendar { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .cal-card .fc { min-width: 420px; }
+  .cal-card .fc .fc-daygrid-day-frame { min-height: 160px; }
+  .cal-card .fc-event .ev-inner { font-size: .85rem; }
+  .cal-card .fc-event .ev-patient,
+  .cal-card .fc-event .ev-bottom { font-size: .78rem; }
+  #cal-toolbar h1 { font-size: 1rem; }
+  #cal-toolbar .cal-chip { height: 30px; padding: 0 10px; font-size: .8rem; }
+}

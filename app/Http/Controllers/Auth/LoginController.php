@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Login com suporte a AJAX (modais) e redirect por role.
+ */
 class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login'); // Criaremos esta view depois
+        return view('auth.login'); // (não usado com o modal, mas mantido)
     }
 
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
@@ -24,17 +27,32 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             $role = Auth::user()->role;
-
-            return match ($role) {
-                'admin'    => redirect()->intended('/admin/dashboard'),
-                'medico'   => redirect()->intended('/medico/dashboard'),
-                'paciente' => redirect()->intended('/home/paciente'),
+            $target = match ($role) {
+                'admin'    => '/admin/dashboard',
+                'medico'   => '/medico/dashboard',
+                'paciente' => '/home/paciente',
                 default    => abort(403, 'Acesso não autorizado.'),
             };
+
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => true, 'redirect_to' => $target]);
+            }
+
+            return redirect()->intended($target);
         }
 
-        return back()->withErrors([
-            'email' => 'As credenciais estão incorretas.',
-        ]);
+        $msg = __('auth.failed');
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => $msg,
+                'form'    => 'login',
+                'errors'  => ['email' => [$msg]],
+            ], 422);
+        }
+
+        return back()
+            ->withInput(['form_name' => 'login'])
+            ->withErrors(['email' => $msg]);
     }
 }

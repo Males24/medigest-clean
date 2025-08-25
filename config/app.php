@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'contacts' => [
+        'urgencias_phone' => env('APP_URG_PHONE', '808 500 500'),
+        'marcacoes_phone' => env('APP_BOOK_PHONE', '210 000 000'),
+        'support_phone'   => env('APP_SUPPORT_PHONE', '210 000 111'),
+        'general_email'   => env('APP_GENERAL_EMAIL', 'geral@medigest.com'),
+        'booking_email'   => env('APP_BOOK_EMAIL', 'marcacoes@medigest.com'),
+        'support_email'   => env('APP_SUPPORT_EMAIL', 'apoio@medigest.com'),
+        'whatsapp'        => env('APP_WHATSAPP', '+351910000000'),
+        'address'         => env('APP_ADDRESS', 'Av. Exemplo 123, 1000-000 Porto'),
+        'hours'           => env('APP_HOURS',   'Dias úteis: 08h00–20h00 · Sáb. 09h00–13h00'),
+    ],
+
 ];

@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Especialidade;
 use Illuminate\Http\Request;
 
+/**
+ * CRUD de Especialidades (admin).
+ */
 class EspecialidadeController extends Controller
 {
     public function index()

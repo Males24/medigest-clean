@@ -6,20 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\ConfiguracaoHorario;
 use Illuminate\Http\Request;
 
+/**
+ * Gestão de horários padrão (admin).
+ * Permite configurar em massa e por dia.
+ */
 class ConfiguracaoHorarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    /** Listagem simples dos horários existentes. */
     public function index()
     {
         $horarios = ConfiguracaoHorario::orderBy('dia_semana')->get();
         return view('admin.horarios.index', compact('horarios'));
     }
 
-    /**
-     * Página para configurar vários dias de uma vez
-     */
+    /** Ecrã de configuração em massa (vários dias de uma vez). */
     public function configurar()
     {
         $horarios = ConfiguracaoHorario::orderBy('dia_semana')->get();
@@ -27,9 +27,7 @@ class ConfiguracaoHorarioController extends Controller
         return view('admin.horarios.configurar', compact('horarios', 'diasSemana'));
     }
 
-    /**
-     * Atualiza em massa os dias selecionados
-     */
+    /** Aplica alterações em massa e ativa/desativa dias. */
     public function atualizarTodos(Request $request)
     {
         $data = $request->validate([
@@ -45,7 +43,6 @@ class ConfiguracaoHorarioController extends Controller
 
         $selecionados = collect($data['dias'])->map(fn ($d) => (int)$d)->all();
 
-        // Para os dias SELECIONADOS: aplica valores; '' => null (limpa)
         $mi = $request->input('manha_inicio');
         $mf = $request->input('manha_fim');
         $ti = $request->input('tarde_inicio');
@@ -59,22 +56,17 @@ class ConfiguracaoHorarioController extends Controller
             'ativo'        => true,
         ];
 
-        // 1) Atualiza e ativa os dias selecionados
-        ConfiguracaoHorario::whereIn('dia_semana', $selecionados)
-            ->update($horasSelecionados);
+        ConfiguracaoHorario::whereIn('dia_semana', $selecionados)->update($horasSelecionados);
 
-        // 2) Desativa e LIMPA completamente os dias NÃO selecionados
-        ConfiguracaoHorario::whereNotIn('dia_semana', $selecionados)
-            ->update([
-                'manha_inicio' => null,
-                'manha_fim'    => null,
-                'tarde_inicio' => null,
-                'tarde_fim'    => null,
-                'ativo'        => false,
-            ]);
+        ConfiguracaoHorario::whereNotIn('dia_semana', $selecionados)->update([
+            'manha_inicio' => null,
+            'manha_fim'    => null,
+            'tarde_inicio' => null,
+            'tarde_fim'    => null,
+            'ativo'        => false,
+        ]);
 
-        return redirect()->route('admin.horarios.index')
-            ->with('success', 'Horários atualizados!');
+        return redirect()->route('admin.horarios.index')->with('success', 'Horários atualizados!');
     }
 
     /**
@@ -109,9 +101,7 @@ class ConfiguracaoHorarioController extends Controller
         
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    /** Atualização individual. */
     public function update(Request $request, ConfiguracaoHorario $configuracaoHorario)
     {
         $request->validate([

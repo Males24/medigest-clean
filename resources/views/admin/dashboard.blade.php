@@ -84,5 +84,5 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
-@vite('resources/js/pages/dashboard-admin.js')
+@vite('resources/js/pages/admin/dashboard-admin.js')
 @endsection

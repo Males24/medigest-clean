@@ -6,8 +6,21 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+
+/**
+ * Gera um avatar SVG com as iniciais do utilizador.
+ *
+ * Rotas:
+ * - GET /avatar/{user}.svg -> initials()
+ *
+ * Notas: usa ETag para cache e um fallback de cores
+ * que combina com o tema da app.
+ */
 class AvatarController extends Controller
 {
+    /**
+     * Renderiza o SVG com as iniciais do utilizador.
+     */
     public function initials(Request $request, User $user)
     {
         $initials = collect(preg_split('/\s+/', trim((string) $user->name)))

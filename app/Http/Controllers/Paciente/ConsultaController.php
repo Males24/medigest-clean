@@ -6,97 +6,86 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreConsultaRequest;
 use App\Models\Consulta;
 use App\Models\Medico;
+use App\Models\Especialidade;
 use App\Services\ConsultaService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
 class ConsultaController extends Controller
 {
+    /** Landing “Consulta externa”. */
     public function index()
     {
-        $consultas = Consulta::where('paciente_id', Auth::id())
-            ->with(['medico.user'])
-            ->latest('data')
-            ->paginate(15);
-
-        return view('paciente.consultas.index', compact('consultas'));
+        return view('paciente.consultas.index');
     }
 
-    public function create()
+    /** Wizard de marcação (carrega especialidades). */
+    public function create(Request $request)
     {
-        // Mostra nomes vindos de users relacionados ao médico
-        $medicos = Medico::with('user')->get();
-        return view('paciente.consultas.create', compact('medicos'));
+        $especialidades = Especialidade::orderBy('nome')->get(['id','nome']);
+        return view('paciente.consultas.create', compact('especialidades'));
     }
 
-    // Endpoint para a view buscar slots disponíveis (AJAX)
-    public function slots(Request $request, Medico $medico, ConsultaService $svc)
-    {
-        $request->validate([
-            'data'    => ['required','date_format:Y-m-d'],
-            'duracao' => ['nullable','integer','min:10','max:180'],
-            'tipo'    => ['nullable','in:normal,prioritaria,urgente'],
-        ]);
-
-        $data    = $request->query('data');
-        $duracao = $request->query('duracao'); // null -> serviço decide
-        $tipo    = $request->query('tipo', 'normal');
-
-        // médico no serviço = users.id
-        $medicoUserId = (int) $medico->user_id;
-
-        $slots = $svc->gerarSlotsDisponiveis($medicoUserId, $data, $duracao, $tipo);
-
-        return response()->json(['data' => $slots]);
-    }
-
+    /** POST: guarda marcação (estado: pendente_medico). */
     public function store(StoreConsultaRequest $request, ConsultaService $svc)
     {
         $dados = $request->validated();
+        $dados['paciente_id'] = (int) auth()->id(); // paciente é o próprio
 
-        // mapear 'tipo' -> 'tipo_slug' se necessário
-        if (!isset($dados['tipo_slug']) && isset($dados['tipo'])) {
-            $dados['tipo_slug'] = $dados['tipo'];
-            unset($dados['tipo']);
+        // médico tem de possuir a especialidade
+        $medicoPerfil = Medico::where('user_id', $dados['medico_id'])->first();
+        if (!$medicoPerfil) {
+            return back()->withInput()->withErrors(['medico_id' => 'Médico inválido.']);
+        }
+        $temEspecialidade = $medicoPerfil->especialidades()
+            ->where('especialidades.id', $dados['especialidade_id'])
+            ->exists();
+        if (!$temEspecialidade) {
+            return back()->withInput()->withErrors(['medico_id' => 'O médico não possui a especialidade escolhida.']);
         }
 
-        // paciente autenticado
-        $dados['paciente_id'] = (int)auth()->id();
-
-        // duração pelo tipo
-        $tipo = \App\Models\ConsultaTipo::where('slug',$dados['tipo_slug'] ?? 'normal')->where('ativo',1)->firstOrFail();
-        $dados['duracao'] = $tipo->duracao_min;
+        $tipo = \App\Models\ConsultaTipo::where('slug', $dados['tipo_slug'])->where('ativo', 1)->firstOrFail();
+        $duracao = (int) $tipo->duracao_min;
 
         $ok = $svc->verificarDisponibilidade(
-            (int)$dados['medico_id'], // aqui deve já vir users.id do médico a partir do form
-            $dados['data'],
-            $dados['hora'],
-            (int)$dados['duracao'],
-            $dados['tipo_slug']
+            (int)$dados['medico_id'], $dados['data'], $dados['hora'], $duracao, $dados['tipo_slug']
         );
-
         if (!$ok) {
             return back()->withInput()->withErrors(['hora' => 'Slot indisponível para este médico.']);
         }
 
-        // paciente cria -> fica pendente até médico aceitar
-        $dados['estado'] = 'pendente_medico';
+        Consulta::create([
+            'paciente_id'      => (int)$dados['paciente_id'],
+            'medico_id'        => (int)$dados['medico_id'],
+            'especialidade_id' => (int)$dados['especialidade_id'],
+            'tipo_slug'        => $dados['tipo_slug'],
+            'data'             => $dados['data'],
+            'hora'             => $dados['hora'],
+            'duracao'          => $duracao,
+            'motivo'           => $dados['descricao'] ?? null,
+            'estado'           => 'pendente_medico',
+        ]);
 
-        Consulta::create($dados);
-
-        return redirect()->route('paciente.consultas.index')->with('success', 'Consulta agendada (aguarda confirmação do médico).');
+        return redirect()->route('paciente.home')
+            ->with('success', 'Consulta agendada (aguarda confirmação do médico).');
     }
 
+    /** POST: cancela (regra: > 24h). */
     public function cancelar(Consulta $consulta)
     {
-        // Só o dono pode cancelar
-        if ((int) $consulta->paciente_id !== (int) Auth::id()) {
-            abort(403);
+        if ((int) $consulta->paciente_id !== (int) Auth::id()) abort(403);
+
+        // Combina data + hora sem "double time"
+        $dataHora = $consulta->data instanceof Carbon
+            ? $consulta->data->copy()
+            : Carbon::parse($consulta->data);
+
+        if (!empty($consulta->hora)) {
+            try { $dataHora->setTimeFromTimeString($consulta->hora); } catch (\Throwable $e) {}
         }
 
-        // Regra: não permite cancelar a < 24h do início
-        $dataHora = Carbon::parse($consulta->data . ' ' . $consulta->hora);
         if ($dataHora->lt(now()->addDay())) {
             return back()->withErrors(['cancelar' => 'Não é possível cancelar com menos de 24h de antecedência.']);
         }
@@ -105,4 +94,42 @@ class ConsultaController extends Controller
 
         return back()->with('success', 'Consulta cancelada.');
     }
+
+    /** Lista com tabs: futuras | passadas | todas */
+    public function todas(\Illuminate\Http\Request $request)
+{
+    $pacienteId = (int) \Illuminate\Support\Facades\Auth::id();
+    $tab = $request->query('tab', 'futuras');
+
+    $nowDate = \Carbon\Carbon::today()->toDateString();
+    $nowTime = \Carbon\Carbon::now()->format('H:i');
+
+    $q = \App\Models\Consulta::with(['medico','especialidade','tipo'])
+        ->where('paciente_id', $pacienteId);
+
+    if ($tab === 'futuras') {
+        $q->where(function($w) use ($nowDate,$nowTime){
+              $w->where('data', '>', $nowDate)
+                ->orWhere(function($i) use ($nowDate,$nowTime){
+                    $i->where('data', $nowDate)->where('hora', '>=', $nowTime);
+                });
+          })
+          ->whereNotIn('estado', ['cancelada','cancelada_paciente','cancelada_medico','concluida'])
+          ->orderBy('data')->orderBy('hora');
+    } elseif ($tab === 'passadas') {
+        $q->where(function($w) use ($nowDate,$nowTime){
+              $w->where('data', '<', $nowDate)
+                ->orWhere(function($i) use ($nowDate,$nowTime){
+                    $i->where('data', $nowDate)->where('hora', '<', $nowTime);
+                });
+          })
+          ->orderByDesc('data')->orderByDesc('hora');
+    } else {
+        $q->orderByDesc('data')->orderByDesc('hora');
+    }
+
+    $consultas = $q->paginate(15)->withQueryString();
+
+    return view('paciente.consultas.todas', compact('consultas','tab'));
+}
 }
