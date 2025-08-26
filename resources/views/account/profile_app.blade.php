@@ -33,119 +33,165 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- Dados pessoais --}}
-        <form method="POST" action="{{ route('account.profile.update') }}" enctype="multipart/form-data"
-              class="lg:col-span-2 rounded-2xl border border-zinc-200 bg-white">
+        {{-- Form perfil --}}
+        <form id="form-profile" method="POST" action="{{ route('account.profile.update') }}"
+              enctype="multipart/form-data"
+              class="lg:col-span-2 bg-white rounded-2xl shadow-sm ring-1 ring-gray-200/60 flex flex-col min-h-[420px]"
+              novalidate>
           @csrf @method('PUT')
 
-          <div class="p-6 sm:p-8 space-y-6">
+          <div class="p-6 sm:p-8 space-y-6 flex-1">
+            {{-- Avatar + ações --}}
             <div class="flex items-center gap-5">
-              <img id="avatarPreview" src="{{ $avatarCurrent }}" alt="Avatar {{ $user->name }}"
-                   class="w-20 h-20 rounded-full object-cover ring-1 ring-zinc-200">
+              <img id="avatarPreview" src="{{ $avatarCurrent }}" alt="{{ __('messages.profile.title') }} — Avatar {{ $user->name }}"
+                  class="w-20 h-20 rounded-full ring-1 ring-gray-200 shadow-sm object-cover" loading="lazy" decoding="async">
+
               <div class="space-y-2">
                 <div class="flex flex-wrap items-center gap-2">
                   <label for="avatar"
-                         class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm border border-zinc-200 bg-white hover:bg-zinc-50 cursor-pointer">
+                        class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm
+                                text-slate-800 border border-white/50 ring-1 ring-gray-200/80
+                                bg-gradient-to-b from-gray-50 to-gray-100
+                                shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.95),inset_3px_3px_8px_rgba(15,23,42,0.10)]
+                                hover:from-white hover:to-gray-50 hover:ring-gray-300/80 cursor-pointer">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                    Alterar foto
+                    {{ __('messages.actions.change_photo') }}
                   </label>
-                  <input id="avatar" name="avatar" type="file" class="hidden" accept="image/png,image/jpeg,image/webp">
-                  <label class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-sm border border-zinc-200 bg-white hover:bg-zinc-50 cursor-pointer select-none">
-                    <input type="checkbox" name="remove_avatar" value="1" class="rounded">
-                    Remover foto
+                  <input id="avatar" name="avatar" type="file" class="hidden" accept="image/png,image/jpeg,image/webp" aria-describedby="avatar-hint">
+
+                  <label class="inline-flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm
+                                text-slate-800 border border-white/50 ring-1 ring-gray-200/80
+                                bg-gradient-to-b from-gray-50 to-gray-100
+                                shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.95),inset_3px_3px_8px_rgba(15,23,42,0.10)]
+                                hover:from-white hover:to-gray-50 hover:ring-gray-300/80 cursor-pointer select-none">
+                    <input type="checkbox" name="remove_avatar" id="remove_avatar" value="1" class="rounded" aria-describedby="avatar-hint">
+                    {{ __('messages.actions.remove_photo') }}
                   </label>
                 </div>
-                <p class="text-xs text-zinc-500">PNG/JPG/WebP, até 2MB.</p>
+
+                <p id="avatar-hint" class="text-xs text-gray-500">{{ __('messages.profile.photo_hint') }}</p>
+                @error('avatar') <p class="text-xs text-rose-600">{{ $message }}</p> @enderror
               </div>
             </div>
 
+            {{-- Campos principais --}}
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label for="name" class="block text-sm font-medium text-zinc-800">Nome</label>
-                <input id="name" name="name" type="text" class="mt-1 w-full h-11 rounded-xl border border-zinc-300 px-3 text-sm focus:border-emerald-600 focus:ring-emerald-600"
-                       value="{{ old('name', $user->name) }}" required>
+                <x-form.input
+                  id="name" name="name"
+                  :label="__('messages.profile.name')"
+                  :placeholder="__('messages.doctors.name_ph')"
+                  :value="old('name', $user->name)"
+                  icon="components.icons.admin.user"
+                  required
+                />
+                @error('name') <p class="text-sm text-red-600 -mt-2 mb-2">{{ $message }}</p> @enderror
               </div>
 
               <div>
-                <label for="email" class="block text-sm font-medium text-zinc-800">Email</label>
-                <input id="email" name="email" type="email" class="mt-1 w-full h-11 rounded-xl border border-zinc-300 px-3 text-sm focus:border-emerald-600 focus:ring-emerald-600"
-                       value="{{ old('email', $user->email) }}" required>
+                <x-form.input
+                  id="email" name="email" type="email"
+                  :label="__('messages.profile.email')"
+                  :placeholder="__('messages.doctors.email_ph')"
+                  :value="old('email', $user->email)"
+                  icon="components.icons.admin.email"
+                  required
+                />
+                @error('email') <p class="text-sm text-red-600 -mt-2 mb-2">{{ $message }}</p> @enderror
               </div>
 
               <div>
-                <label for="phone" class="block text-sm font-medium text-zinc-800">Telefone</label>
-                <input id="phone" name="phone" type="tel" class="mt-1 w-full h-11 rounded-xl border border-zinc-300 px-3 text-sm focus:border-emerald-600 focus:ring-emerald-600"
-                       value="{{ old('phone', $user->phone) }}">
+                <x-form.input
+                  id="phone" name="phone" type="tel"
+                  :label="__('messages.profile.phone')"
+                  :placeholder="__('messages.profile.phone')"
+                  :value="old('phone', $user->phone ?? '')"
+                  icon="components.icons.admin.phone"
+                />
+                @error('phone') <p class="text-sm text-red-600 -mt-2 mb-2">{{ $message }}</p> @enderror
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-zinc-800">Função</label>
-                <input type="text" class="mt-1 w-full h-11 rounded-xl border border-zinc-200 bg-zinc-50 px-3 text-sm" value="{{ ucfirst($user->role) }}" disabled>
+                <x-form.input
+                  id="role" name="role" type="text"
+                  :label="__('messages.profile.role')"
+                  :placeholder="__('messages.profile.role')"
+                  :value="ucfirst($user->role)"
+                  icon="components.icons.admin.id"
+                  disabled
+                />
               </div>
             </div>
           </div>
 
-          <div class="px-6 sm:px-8 py-4 bg-zinc-50 rounded-b-2xl flex items-center justify-end">
-            <button type="submit" class="px-5 py-2.5 rounded-xl text-white bg-emerald-700 hover:bg-emerald-800">
-              Guardar alterações
+          <div class="px-6 sm:px-8 py-4 bg-gray-50 rounded-b-2xl flex items-center justify-end">
+            <button type="submit" class="px-5 py-2.5 rounded-xl text-white bg-home-medigest hover:bg-home-medigest-hover">
+              {{ __('messages.actions.save_changes') }}
             </button>
           </div>
         </form>
 
-        {{-- Segurança --}}
-        <form method="POST" action="{{ route('account.password.update') }}" class="rounded-2xl border border-zinc-200 bg-white">
+        {{-- Segurança (passwords com ícone + ver/ocultar) --}}
+        <form id="form-password" method="POST" action="{{ route('account.password.update') }}"
+              class="bg-white rounded-2xl shadow-sm ring-1 ring-gray-200/60 flex flex-col min-h-[420px]"
+              novalidate>
           @csrf @method('PUT')
 
-          <div class="p-6 sm:p-8 space-y-4">
-            <h2 class="text-lg font-medium text-zinc-900">Segurança</h2>
+          <div class="p-6 sm:p-8 space-y-4 flex-1">
+            <h2 class="text-lg font-medium text-gray-900">{{ __('messages.profile.security') }}</h2>
 
-            <div>
-              <label for="pwd-new" class="block text-sm font-medium text-zinc-800">Nova password</label>
-              <div class="mt-1 relative">
-                <input id="pwd-new" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password"
-                       class="w-full h-11 rounded-xl border border-zinc-300 px-3 pr-10 text-sm focus:border-emerald-600 focus:ring-emerald-600" required>
-                <button type="button" data-toggle="#pwd-new" class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">mostrar</button>
+            <div class="space-y-3">
+              {{-- Nova password --}}
+              <div>
+                <x-form.input
+                  id="pwd-new" name="password" type="password"
+                  :label="__('messages.profile.password_new')"
+                  placeholder="•••••••••"
+                  icon="components.icons.admin.lock"
+                  minlength="8" maxlength="72" autocomplete="new-password"
+                  toggle="true"
+                  toggleLabel="{{ __('messages.profile.show_hide_password') }}"
+                  required
+                />
+                <div class="mt-2 h-1 rounded bg-gray-200" aria-hidden="true">
+                  <div id="pwd-strength-bar" class="h-1 rounded bg-red-500" style="width:0%"></div>
+                </div>
+                <p id="pwd-strength-text" class="text-xs text-gray-500 mt-1" aria-live="polite">
+                  {{ __('messages.profile.strength') }}: —
+                </p>
+                @error('password') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
               </div>
-              @error('password')<p class="text-xs text-rose-600 mt-1">{{ $message }}</p>@enderror
-            </div>
 
-            <div>
-              <label for="pwd-confirm" class="block text-sm font-medium text-zinc-800">Confirmar nova password</label>
-              <div class="mt-1 relative">
-                <input id="pwd-confirm" name="password_confirmation" type="password" minlength="8" maxlength="72" autocomplete="new-password"
-                       class="w-full h-11 rounded-xl border border-zinc-300 px-3 pr-10 text-sm focus:border-emerald-600 focus:ring-emerald-600" required>
-                <button type="button" data-toggle="#pwd-confirm" class="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 text-sm">mostrar</button>
+              {{-- Confirmar password --}}
+              <div>
+                <x-form.input
+                  id="pwd-confirm" name="password_confirmation" type="password"
+                  :label="__('messages.profile.password_confirm')"
+                  placeholder="•••••••••"
+                  icon="components.icons.admin.lock"
+                  minlength="8" maxlength="72" autocomplete="new-password"
+                  toggle="true"
+                  toggleLabel="{{ __('messages.profile.show_hide_password') }}"
+                  required
+                />
+                @error('password_confirmation') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
               </div>
             </div>
           </div>
 
-          <div class="px-6 sm:px-8 py-4 bg-zinc-50 rounded-b-2xl flex items-center justify-end">
-            <button type="submit" class="px-5 py-2.5 rounded-xl text-white bg-emerald-700 hover:bg-emerald-800">
-              Atualizar password
+          <div class="px-6 sm:px-8 py-4 bg-gray-50 rounded-b-2xl flex items-center justify-end">
+            <button type="submit" class="px-5 py-2.5 rounded-xl text-white bg-home-medigest hover:bg-home-medigest-hover">
+              {{ __('messages.actions.update_password') }}
             </button>
           </div>
         </form>
       </div>
     </div>
   </div>
-@endsection
 
 @push('body-end')
-<script>
-  // preview do avatar
-  document.getElementById('avatar')?.addEventListener('change', (e)=>{
-    const f = e.target.files?.[0]; if(!f) return;
-    const url = URL.createObjectURL(f);
-    const img = document.getElementById('avatarPreview');
-    img.src = url; img.onload = ()=>URL.revokeObjectURL(url);
-  });
-  // mostrar/ocultar password
-  document.querySelectorAll('[data-toggle]')?.forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const input = document.querySelector(btn.dataset.toggle);
-      if(!input) return;
-      input.type = input.type === 'password' ? 'text' : 'password';
-      btn.textContent = input.type === 'password' ? 'mostrar' : 'ocultar';
-    });
-  });
-</script>
+  @vite('resources/js/pages/account/account-profile.js')
 @endpush
+@endsection
+
+

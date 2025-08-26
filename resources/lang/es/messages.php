@@ -12,6 +12,11 @@ return [
     ],
 
     'nav' => [
+        'home'               => 'Inicio',
+        'services'           => 'Servicios',
+        'doctors'            => 'Cuerpo Clínico',
+        'channels'           => 'Canales',
+
         'dashboard'          => 'Panel',
         'all_consultations'  => 'Todas las Consultas',
         'specialties'        => 'Especialidades',
@@ -40,7 +45,6 @@ return [
         'change_photo'       => 'Cambiar foto',
         'remove_photo'       => 'Eliminar foto',
         'view'               => 'Ver',
-        // extras
         'next'               => 'Siguiente',
         'back'               => 'Anterior',
         'create'             => 'Crear',
@@ -96,7 +100,6 @@ return [
         'from'               => 'desde',
         'to'                 => 'hasta',
         'daily_total'        => 'Total diario en el período.',
-        // KPIs / hints
         'kpi_users'                => 'Usuarios',
         'kpi_doctors'              => 'Médicos registrados',
         'kpi_active_consultations' => 'Consultas (activas)',
@@ -106,7 +109,6 @@ return [
     ],
 
     'consultas' => [
-        // listado
         'list_title'         => 'Consultas',
         'list_subtitle'      => 'Lista de todas las consultas registradas en el sistema.',
         'patient'            => 'Paciente',
@@ -117,7 +119,6 @@ return [
         'status'             => 'Estado',
         'actions'            => 'Acciones',
 
-        // crear (wizard)
         'create_title'       => 'Crear Consulta',
         'create_subtitle'    => 'Completa los pasos para agendar la consulta.',
         'type'               => 'Tipo',
@@ -126,7 +127,6 @@ return [
         'review'             => 'Revisión',
         'schedule'           => 'Agendar',
 
-        // ayudas/placeholders
         'select_patient'          => 'Seleccionar paciente',
         'select_doctor'           => 'Seleccionar médico',
         'select_specialty_first'  => '— selecciona la especialidad —',
@@ -265,6 +265,6 @@ return [
         'month' => 'Mes',
         'week'  => 'Semana',
         'day'   => 'Día',
-        'list'  => 'Agenda', // o 'Lista'
+        'list'  => 'Agenda',
     ],
 ];

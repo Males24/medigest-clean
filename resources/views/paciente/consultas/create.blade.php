@@ -22,7 +22,7 @@
   <x-ui.hero
     title="Nova consulta"
     subtitle="Siga os passos: especialidade, médico, tipo, data &amp; hora e revisão."
-    height="220px"
+    height="160px"
   />
 <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
      data-page="wizard-consulta-paciente">

@@ -15,7 +15,7 @@
 @vite([
     'resources/css/app.css',
     'resources/js/app.js',
-    'resources/js/pages/auth/auth-modals.js',  {{-- controlador dos modais de auth --}}
+    'resources/js/pages/auth/auth-modals.js',
 ])
 @stack('head')
 </head>
@@ -26,12 +26,12 @@
     Saltar para o conteúdo
 </a>
 
-<header class="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sticky top-0 z-40" role="banner">
+<header id="site-header" class="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sticky top-0 z-50" role="banner">
   <div class="max-w-[1430px] mx-auto flex items-center gap-3 justify-between">
     <a href="{{ route('home') }}" class="inline-flex items-center shrink-0" aria-label="MediGest+">
       <img src="{{ asset('/Logo_Preto.svg') }}"
            alt="MediGest+"
-           class="h-8 sm:h-10 w-auto select-none"
+           class="h-8 sm:h-11 w-auto select-none"
            loading="eager" fetchpriority="high" decoding="async">
     </a>
 
@@ -120,6 +120,7 @@
 @auth
   @if ((auth()->user()->role ?? null) === 'paciente')
     @include('layouts.partials.navbar-paciente')
+    @vite('resources/js/layout/navbar-paciente.js')
   @endif
 @endauth
 
@@ -131,17 +132,15 @@
   &copy; {{ date('Y') }} Todos os direitos reservados | <strong>MediGest+</strong>
 </footer>
 
-{{-- Template do modal único + auto-open (apenas para convidados) --}}
+{{-- Modais de autenticação --}}
 @guest
   @include('auth.auth_modal')
-
   @php
     $oldForm = old('form_name');
     $openByErrors = $errors->any() && in_array($oldForm, ['login','register','forgot']) ? $oldForm : null;
     $openByStatus = session('status') ? 'forgot' : null;
     $want = session('auth_modal') ?? $openByErrors ?? $openByStatus;
   @endphp
-
   @if ($want)
     <script>
       window.addEventListener('DOMContentLoaded', () => {
@@ -150,6 +149,19 @@
     </script>
   @endif
 @endguest
+
+{{-- calcula a altura do header e expõe --hdr-h para a navbar sticky --}}
+<script>
+  (function () {
+    const setHdrH = () => {
+      const h = document.getElementById('site-header');
+      if (!h) return;
+      document.documentElement.style.setProperty('--header-h', h.offsetHeight + 'px');
+    };
+    window.addEventListener('DOMContentLoaded', setHdrH, { once: true });
+    window.addEventListener('resize', setHdrH);
+  })();
+</script>
 
 @stack('body-end')
 </body>

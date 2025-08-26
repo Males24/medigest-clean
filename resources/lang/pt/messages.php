@@ -14,6 +14,11 @@ return [
 
     // Itens de navegação (sidebar / header)
     'nav' => [
+        'home'               => 'Início',
+        'services'           => 'Serviços',
+        'doctors'            => 'Corpo Clínico',
+        'channels'           => 'Canais',
+
         'dashboard'          => 'Dashboard',
         'all_consultations'  => 'Todas as Consultas',
         'specialties'        => 'Especialidades',
@@ -280,6 +285,6 @@ return [
         'month' => 'Mês',
         'week'  => 'Semana',
         'day'   => 'Dia',
-        'list'  => 'Agenda', // ou 'Lista'
+        'list'  => 'Agenda',
     ],
 ];

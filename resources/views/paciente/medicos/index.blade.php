@@ -21,7 +21,6 @@
 @section('content')
   <x-ui.breadcrumbs :items="[
     ['label'=>'Início','url'=>route('home')],
-    ['label'=>'Serviços','url'=>Route::has('paciente.consultas.index') ? route('paciente.consultas.index') : '#'],
     ['label'=>'Corpo Clínico']
   ]" />
   <x-ui.hero title="Corpo Clínico" subtitle="Conheça todos os médicos e marque a sua consulta." height="160px" />

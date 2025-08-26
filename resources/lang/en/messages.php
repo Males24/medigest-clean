@@ -12,6 +12,11 @@ return [
     ],
 
     'nav' => [
+        'home'               => 'Home',
+        'services'           => 'Services',
+        'doctors'            => 'Clinical Team',
+        'channels'           => 'Channels',
+
         'dashboard'          => 'Dashboard',
         'all_consultations'  => 'All Consultations',
         'specialties'        => 'Specialties',
@@ -40,7 +45,6 @@ return [
         'change_photo'       => 'Change photo',
         'remove_photo'       => 'Remove photo',
         'view'               => 'View',
-        // extras used in wizards/forms
         'next'               => 'Next',
         'back'               => 'Back',
         'create'             => 'Create',
@@ -96,7 +100,6 @@ return [
         'from'               => 'from',
         'to'                 => 'to',
         'daily_total'        => 'Daily total in the period.',
-        // KPIs / hints
         'kpi_users'                => 'Users',
         'kpi_doctors'              => 'Registered doctors',
         'kpi_active_consultations' => 'Consultations (active)',
@@ -106,7 +109,6 @@ return [
     ],
 
     'consultas' => [
-        // list
         'list_title'         => 'Consultations',
         'list_subtitle'      => 'List of all consultations registered in the system.',
         'patient'            => 'Patient',
@@ -117,7 +119,6 @@ return [
         'status'             => 'Status',
         'actions'            => 'Actions',
 
-        // create (wizard)
         'create_title'       => 'Create Consultation',
         'create_subtitle'    => 'Fill the steps to schedule the consultation.',
         'type'               => 'Type',
@@ -126,7 +127,6 @@ return [
         'review'             => 'Review',
         'schedule'           => 'Schedule',
 
-        // wizard helpers / placeholders
         'select_patient'          => 'Select patient',
         'select_doctor'           => 'Select doctor',
         'select_specialty_first'  => '— select the specialty —',

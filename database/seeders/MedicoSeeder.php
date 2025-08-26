@@ -30,7 +30,7 @@ class MedicoSeeder extends Seeder
             ['crm' => 'CRM123', 'bio' => 'Cardiologista com experiência.']
         );
 
-        $m1->especialidades()->sync(array_rand(array_flip($especialidades), 2));
+        $m1->especialidades()->sync(array_rand(array_flip($especialidades), 4));
 
         // Segundo médico
         $medico2 = User::factory()->medico()->create([
@@ -46,5 +46,6 @@ class MedicoSeeder extends Seeder
         );
 
         $m2->especialidades()->sync(array_rand(array_flip($especialidades), 2));
+
     }
 }
